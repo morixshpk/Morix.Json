@@ -1,8 +1,11 @@
 # Morix.Json
-Json Library for .NET
+Json Library for .NET inspired by:
+[LightJson](https://github.com/MarcosLopezC/LightJson), 
+[SimpleJSON](https://github.com/Bunny83/SimpleJSON/blob/master/SimpleJSON.cs)
+[TinyJSON](https://github.com/pbhogan/TinyJSON)
 
 
-Fluet API support
+Flunet API support for creating json objects
 
 ```
 var jobj = new JsonObject
@@ -22,3 +25,4 @@ var json = jobj.ToString();
 Debug.Print(json);
 //{"null":null,"bool":true,"number":123,"string":"string","datetime":"2022-01-15T14:59:33.0000000Z","list":[1,2.1,3.3]}
 ```
+
