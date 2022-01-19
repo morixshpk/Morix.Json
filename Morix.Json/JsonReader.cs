@@ -10,7 +10,7 @@ namespace Morix.Json
 	/// <summary>
 	/// Represents a reader that can read JsonValues.
 	/// </summary>
-	public sealed class JsonReader
+	internal sealed class JsonReader
 	{
 		private readonly TextScanner scanner;
 

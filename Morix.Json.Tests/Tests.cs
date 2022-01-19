@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Morix.Json.Tests
 {
@@ -12,22 +13,21 @@ namespace Morix.Json.Tests
 		[TestMethod]
 		public void TestDebug()
 		{
-			var jobj1 = new JsonObject
+			var jobj = new JsonObject
 			{
 				["null"] = new JsonNull(),
 				["bool"] = new JsonBoolean(true),
 				["number"] = new JsonNumber(123),
 				["string"] = new JsonString("string"),
-				["datetime"] = new JsonString(System.DateTime.Now),
+				["datetime"] = new JsonString(new DateTime(2022, 1, 15, 14, 59, 33, DateTimeKind.Utc)),
 				["list"] = new JsonArray(
 					new JsonNumber(1),
 					new JsonNumber(2.1f),
 					new JsonNumber(3.3d)),
 			};
 
-			var jobj2 = JsonConvert.Parse(jobj1.ToString());
-
-			Assert.AreEqual(jobj1.ToString(), jobj2.ToString());
+			var json = jobj.ToString();
+			Debug.Print(json);
 		}
 
 		[TestMethod]
@@ -109,11 +109,11 @@ namespace Morix.Json.Tests
 		{
 			double d = 1.0;
 			var json = JsonConvert.Parse(d);
-			Assert.AreEqual(d, json.ToNumberDouble());
+			Assert.AreEqual(d, json.ToDouble());
 
 			d = 1.0E+2;
 			json = JsonConvert.Parse(d.ToString());
-			Assert.AreEqual(d, json.ToNumberDouble());
+			Assert.AreEqual(d, json.ToDouble());
 		}
 
 		[TestMethod]

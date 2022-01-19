@@ -128,9 +128,59 @@ namespace Morix.Json
             return this.innerValue.GetHashCode();
         }
 
-        public override double ToNumberDouble()
+        public override byte ToByte()
         {
-            return double.Parse(this.innerValue, NumberStyles.Float, CultureInfo.InvariantCulture);    
+            return byte.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override sbyte ToSByte()
+        {
+            return sbyte.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override short ToShort()
+        {
+            return short.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override ushort ToUShort()
+        {
+            return ushort.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override int ToInt()
+        {
+            return int.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override uint ToUInt()
+        {
+            return uint.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override long ToLong()
+        {
+            return long.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override ulong ToULong()
+        {
+            return ulong.Parse(this.innerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+        }
+
+        public override float ToFloat()
+        {
+            return float.Parse(this.innerValue, NumberStyles.Float, CultureInfo.InvariantCulture);
+        }
+
+        public override double ToDouble()
+        {
+            return double.Parse(this.innerValue, NumberStyles.Float, CultureInfo.InvariantCulture);
+        }
+
+        public override decimal ToDecimal()
+        {
+            return decimal.Parse(this.innerValue, NumberStyles.Float, CultureInfo.InvariantCulture);
         }
     }
 }

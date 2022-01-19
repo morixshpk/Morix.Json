@@ -9,7 +9,7 @@ namespace Morix.Json
 	/// <summary>
 	/// Represents a text scanner that reads one character at a time.
 	/// </summary>
-	public sealed class TextScanner
+	internal sealed class TextScanner
 	{
 		private readonly TextReader reader;
 		private TextPosition position;

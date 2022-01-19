@@ -98,8 +98,58 @@ namespace Morix.Json
             return new JsonString(value);
         }
 
-        public virtual double ToNumberDouble()
+        public virtual byte ToByte()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual sbyte ToSByte()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual short ToShort()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual ushort ToUShort()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual int ToInt()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual uint ToUInt()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual long ToLong()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual ulong ToULong()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual float ToFloat()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual double ToDouble()
         { 
+            throw new InvalidCastException();
+        }
+
+        public virtual decimal ToDecimal()
+        {
             throw new InvalidCastException();
         }
     }

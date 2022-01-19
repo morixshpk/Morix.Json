@@ -11,7 +11,7 @@ namespace Morix.Json
 	/// <summary>
 	/// Represents a TextWriter adapter that can write string representations of JsonValues.
 	/// </summary>
-	public sealed class JsonWriter
+	internal sealed class JsonWriter
 	{
 		private int indent;
 		private bool isNewLine;
