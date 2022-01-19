@@ -20,8 +20,4 @@
     <ProjectReference Include="..\Morix.Json\Morix.Json.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Infrastructure\" />
-  </ItemGroup>
-
 </Project>

@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading;
 using System.Diagnostics;
 
+
 namespace Morix.Json.Tests
 {
-	[TestClass]
-	public class Tests
+    [TestClass]
+	public partial class Tests
 	{
 		[TestMethod]
 		public void TestDebug()
@@ -529,6 +530,24 @@ namespace Morix.Json.Tests
 					C = 30,
 					D = 40
 				}));
+		}
+
+		public void TestOrderItem()
+		{
+			var business = new Business
+			{
+				Name = "Morix",
+				Founded = 2015,
+				Location = new List<double> { 41.321693420410156f, 19.799325942993164f }
+			};
+
+			//serialize
+			var json = JsonConvert.Serialize(business);
+
+
+			//deserialize from text to object
+			var back = JsonConvert.Deserialize<Business>(json);
+
 		}
 	}
 }
