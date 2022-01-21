@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.32014.148
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Morix.Json", "Morix.Json\Morix.Json.csproj", "{3089C6F7-3E36-4C5E-8810-30FE72AC6C8A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Morix.Json.Tests", "Morix.Json.Tests\Morix.Json.Tests.csproj", "{33C9ED7E-7DA1-408F-8F51-381CEA968B0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Morix.Json.Console", "Morix.Json.Console\Morix.Json.Console.csproj", "{EF6B89BA-C23F-485D-AD9C-39E8F99239F9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Morix.Json.App", "Morix.Json.App\Morix.Json.App.csproj", "{EF6B89BA-C23F-485D-AD9C-39E8F99239F9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

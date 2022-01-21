@@ -17,13 +17,6 @@ namespace Morix.Json
 		private bool isNewLine;
 
 		/// <summary>
-		/// A set of containing all the collection objects (JsonObject/JsonArray) being rendered.
-		/// It is used to prevent circular references; since collections that contain themselves
-		/// will never finish rendering.
-		/// </summary>
-		private HashSet<IEnumerable<JsonValue>> renderingCollections;
-
-		/// <summary>
 		/// Gets or sets the string representing a indent in the output.
 		/// </summary>
 		public string IndentString { get; set; }
@@ -52,25 +45,14 @@ namespace Morix.Json
 		/// Initializes a new instance of JsonWriter.
 		/// </summary>
 		/// <param name="innerWriter">The TextWriter used to write JsonValues.</param>
-		public JsonWriter(TextWriter innerWriter) : this(innerWriter, false) { }
-
-		/// <summary>
-		/// Initializes a new instance of JsonWriter.
-		/// </summary>
-		/// <param name="innerWriter">The TextWriter used to write JsonValues.</param>
-		/// <param name="pretty">
-		/// A value indicating whether the output of the writer should be human-readable.
-		/// </param>
-		public JsonWriter(TextWriter innerWriter, bool pretty)
+		public JsonWriter(TextWriter innerWriter)
 		{
-			if (pretty)
+			if (JsonConvert.Beautify)
 			{
 				this.IndentString = "\t";
 				this.SpacingString = " ";
 				this.NewLineString = "\n";
 			}
-
-			renderingCollections = new HashSet<IEnumerable<JsonValue>>();
 
 			InnerWriter = innerWriter;
 		}
@@ -197,19 +179,6 @@ namespace Morix.Json
 			WriteLine();
 		}
 
-		private void AddRenderingCollection(IEnumerable<JsonValue> value)
-		{
-			if (!renderingCollections.Add(value))
-			{
-				throw new JsonSerializationException(ErrorType.CircularReference);
-			}
-		}
-
-		private void RemoveRenderingCollection(IEnumerable<JsonValue> value)
-		{
-			renderingCollections.Remove(value);
-		}
-
 		private void Render(JsonValue value)
 		{
 			switch (value.Type)
@@ -236,8 +205,6 @@ namespace Morix.Json
 
 		private void Render(JsonArray value)
 		{
-			AddRenderingCollection(value);
-
 			WriteLine("[");
 
 			indent += 1;
@@ -266,14 +233,10 @@ namespace Morix.Json
 			indent -= 1;
 
 			Write("]");
-
-			RemoveRenderingCollection(value);
 		}
 
 		private void Render(JsonObject value)
 		{
-			AddRenderingCollection(value);
-
 			WriteLine("{");
 
 			indent += 1;
@@ -305,8 +268,6 @@ namespace Morix.Json
 			indent -= 1;
 
 			Write("}");
-
-			RemoveRenderingCollection(value);
 		}
 
 		/// <summary>
@@ -344,8 +305,6 @@ namespace Morix.Json
 			this.isNewLine = true;
 
 			Render(jsonValue);
-
-			this.renderingCollections.Clear();
 		}
 
 		/// <summary>
@@ -354,19 +313,9 @@ namespace Morix.Json
 		/// <param name="value">The value to serialize.</param>
 		public static string Serialize(JsonValue value)
 		{
-			return Serialize(value, false);
-		}
-
-		/// <summary>
-		/// Generates a string representation of the given value.
-		/// </summary>
-		/// <param name="value">The value to serialize.</param>
-		/// <param name="pretty">Indicates whether the resulting string should be formatted for human-readability.</param>
-		public static string Serialize(JsonValue value, bool pretty)
-		{
 			using (var stringWriter = new StringWriter())
 			{
-				var jsonWriter = new JsonWriter(stringWriter, pretty);
+				var jsonWriter = new JsonWriter(stringWriter);
 
 				jsonWriter.Write(value);
 

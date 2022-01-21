@@ -10,16 +10,40 @@ namespace Morix.Json
 {
     public static class JsonConvert
     {
-        [ThreadStatic] static Stack<List<string>> arrayPool;
+        [ThreadStatic] static Stack<List<string>> array;
         [ThreadStatic] static StringBuilder builder;
 
-        [ThreadStatic] static Dictionary<Type, Dictionary<string, FieldInfo>> fieldInfoCache;
-        [ThreadStatic] static Dictionary<Type, Dictionary<string, PropertyInfo>> propertyInfoCache;
+        [ThreadStatic] static Dictionary<Type, Dictionary<string, FieldInfo>> fieldInfo;
+        [ThreadStatic] static Dictionary<Type, Dictionary<string, PropertyInfo>> propertyInfo;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the result string should be formatted for human-readability.
+        /// </summary>
+        public static bool Beautify { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether JsonObject properties should be written in a deterministic order.
+        /// </summary>
+        public static bool SortProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to include propertis from serialization/deserialization. 
+        /// Default true
+        /// </summary>
+        public static bool IncludeProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to include fields from serialization/deserialization. 
+        /// Default true
+        /// </summary>
+        public static bool IncludeFields { get; set; }
 
         static JsonConvert()
         {
-            propertyInfoCache = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-            fieldInfoCache = new Dictionary<Type, Dictionary<string, FieldInfo>>();
+            propertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+            fieldInfo = new Dictionary<Type, Dictionary<string, FieldInfo>>();
+            IncludeFields = true;
+            IncludeProperties = true;
         }
 
         public static string Serialize(object obj)
@@ -125,36 +149,41 @@ namespace Morix.Json
             else
             {
                 var jobject = new JsonObject();
-                FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-                for (int i = 0; i < fieldInfos.Length; i++)
+                if (IncludeFields)
                 {
-                    if (fieldInfos[i].IsDefined(typeof(IgnoreDataMemberAttribute), true))
-                        continue;
-
-                    object value = fieldInfos[i].GetValue(obj);
-
-                    if (value != null)
+                    FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+                    for (int i = 0; i < fieldInfos.Length; i++)
                     {
-                        var name = GetMemberName(fieldInfos[i]);
-                        var jvalue = Parse(value);
-                        jobject.Add(name, jvalue);
+                        if (fieldInfos[i].IsDefined(typeof(IgnoreDataMemberAttribute), true))
+                            continue;
+
+                        object value = fieldInfos[i].GetValue(obj);
+
+                        if (value != null)
+                        {
+                            var name = GetMemberName(fieldInfos[i]);
+                            var jvalue = Parse(value);
+                            jobject.Add(name, jvalue);
+                        }
                     }
                 }
-                PropertyInfo[] propertyInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-                for (int i = 0; i < propertyInfo.Length; i++)
+                if (IncludeProperties)
                 {
-                    if (!propertyInfo[i].CanRead || propertyInfo[i].IsDefined(typeof(IgnoreDataMemberAttribute), true))
-                        continue;
-
-                    object value = propertyInfo[i].GetValue(obj, null);
-                    if (value != null)
+                    PropertyInfo[] propertyInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
+                    for (int i = 0; i < propertyInfo.Length; i++)
                     {
-                        var name = GetMemberName(propertyInfo[i]);
-                        var jvalue = Parse(value);
-                        jobject.Add(name, jvalue);
+                        if (!propertyInfo[i].CanRead || propertyInfo[i].IsDefined(typeof(IgnoreDataMemberAttribute), true))
+                            continue;
+
+                        object value = propertyInfo[i].GetValue(obj, null);
+                        if (value != null)
+                        {
+                            var name = GetMemberName(propertyInfo[i]);
+                            var jvalue = Parse(value);
+                            jobject.Add(name, jvalue);
+                        }
                     }
                 }
-
                 return jobject;
             }
         }
@@ -174,10 +203,10 @@ namespace Morix.Json
         public static T Deserialize<T>(this string json)
         {
             // Initialize, if needed, the ThreadStatic variables
-            if (propertyInfoCache == null) propertyInfoCache = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-            if (fieldInfoCache == null) fieldInfoCache = new Dictionary<Type, Dictionary<string, FieldInfo>>();
+            if (propertyInfo == null) propertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+            if (fieldInfo == null) fieldInfo = new Dictionary<Type, Dictionary<string, FieldInfo>>();
             if (builder == null) builder = new StringBuilder();
-            if (arrayPool == null) arrayPool = new Stack<List<string>>();
+            if (array == null) array = new Stack<List<string>>();
 
             //Remove all whitespace not within strings to make parsing simpler
             builder.Length = 0;
@@ -221,11 +250,10 @@ namespace Morix.Json
             }
             return json.Length - 1;
         }
-
-        //Splits { <value>:<value>, <value>:<value> } and [ <value>, <value> ] into a list of <value> strings
+        
         static List<string> Split(string json)
         {
-            List<string> splitArray = arrayPool.Count > 0 ? arrayPool.Pop() : new List<string>();
+            List<string> splitArray = array.Count > 0 ? array.Pop() : new List<string>();
             splitArray.Clear();
             if (json.Length == 2)
                 return splitArray;
@@ -347,7 +375,7 @@ namespace Morix.Json
                 Array newArray = Array.CreateInstance(arrayType, elems.Count);
                 for (int i = 0; i < elems.Count; i++)
                     newArray.SetValue(ParseValue(arrayType, elems[i]), i);
-                arrayPool.Push(elems);
+                array.Push(elems);
                 return newArray;
             }
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
@@ -360,7 +388,7 @@ namespace Morix.Json
                 var list = (IList)type.GetConstructor(new Type[] { typeof(int) }).Invoke(new object[] { elems.Count });
                 for (int i = 0; i < elems.Count; i++)
                     list.Add(ParseValue(listType, elems[i]));
-                arrayPool.Push(elems);
+                array.Push(elems);
                 return list;
             }
             if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Dictionary<,>))
@@ -452,8 +480,8 @@ namespace Morix.Json
                 return false;
             // handles json == "null" as well as invalid JSON
             return null;
-        } 
-        
+        }
+
         static object ParseObject(Type type, string json)
         {
             object instance = FormatterServices.GetUninitializedObject(type);
@@ -463,15 +491,15 @@ namespace Morix.Json
             if (elems.Count % 2 != 0)
                 return instance;
 
-            if (!fieldInfoCache.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
+            if (!fieldInfo.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
             {
                 nameToField = CreateMemberNameDictionary(type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                fieldInfoCache.Add(type, nameToField);
+                fieldInfo.Add(type, nameToField);
             }
-            if (!propertyInfoCache.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))
+            if (!propertyInfo.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))
             {
                 nameToProperty = CreateMemberNameDictionary(type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                propertyInfoCache.Add(type, nameToProperty);
+                propertyInfo.Add(type, nameToProperty);
             }
 
             for (int i = 0; i < elems.Count; i += 2)
@@ -481,9 +509,9 @@ namespace Morix.Json
                 string key = elems[i].Substring(1, elems[i].Length - 2);
                 string value = elems[i + 1];
 
-                if (nameToField.TryGetValue(key, out FieldInfo fieldInfo))
+                if (IncludeFields && nameToField.TryGetValue(key, out FieldInfo fieldInfo))
                     fieldInfo.SetValue(instance, ParseValue(fieldInfo.FieldType, value));
-                else if (nameToProperty.TryGetValue(key, out PropertyInfo propertyInfo))
+                else if (IncludeProperties && nameToProperty.TryGetValue(key, out PropertyInfo propertyInfo))
                     propertyInfo.SetValue(instance, ParseValue(propertyInfo.PropertyType, value), null);
             }
 

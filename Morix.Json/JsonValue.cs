@@ -85,12 +85,7 @@ namespace Morix.Json
 
         public override string ToString()
         {
-            return ToString(false);
-        }
-
-        public string ToString(bool pretty)
-        {
-            return JsonWriter.Serialize(this, pretty);
+            return JsonWriter.Serialize(this);
         }
 
         public static implicit operator JsonValue(string value)
