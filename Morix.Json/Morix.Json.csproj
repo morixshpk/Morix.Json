@@ -7,9 +7,14 @@
     <PackageProjectUrl>https://github.com/morixshpk/Morix.Json</PackageProjectUrl>
     <RepositoryUrl>https://github.com/morixshpk/Morix.Json</RepositoryUrl>
     <PackageTags>json</PackageTags>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>1.0.1</AssemblyVersion>
+    <FileVersion>1.0.1</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <UserSecretsId>0ecbe7fc-d559-4fc3-8787-9d85f8384d06</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
+  </ItemGroup>
 
 </Project>

@@ -27,7 +27,7 @@ namespace Morix.Json.Tests
 					new JsonNumber(3.3d)),
 			};
 
-			var json = jobj.ToString();
+			var json = jobj.ToJson();
 			Debug.Print(json);
 		}
 
@@ -54,7 +54,7 @@ namespace Morix.Json.Tests
 		{
 			var jsonValue = JsonConvert.Parse(jsonText);
 			Assert.IsNotNull(jsonValue);
-			Assert.AreEqual(jsonText, jsonValue.ToString());
+			Assert.AreEqual(jsonText, jsonValue.ToJson());
 			//Debug.Print(jsonText + " " + jsonValue.Type.ToString());
 		}
 
@@ -102,18 +102,18 @@ namespace Morix.Json.Tests
 
 			var expectedMessage = @"{""menu"":[""home"",""projects"",""about""]}";
 
-			Assert.AreEqual(expectedMessage, json.ToString());
+			Assert.AreEqual(expectedMessage, json.ToJson());
 		}
 
 		[TestMethod]
 		public void TestNumbers()
 		{
 			double d = 1.0;
-			var json = JsonConvert.Parse(d);
+			var json = new JsonNumber(d);
 			Assert.AreEqual(d, json.ToDouble());
 
 			d = 1.0E+2;
-			json = JsonConvert.Parse(d.ToString());
+			json = new JsonNumber(d.ToString());
 			Assert.AreEqual(d, json.ToDouble());
 		}
 

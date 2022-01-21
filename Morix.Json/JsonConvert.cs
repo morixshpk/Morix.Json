@@ -10,11 +10,15 @@ namespace Morix.Json
 {
     public static class JsonConvert
     {
-        [ThreadStatic] static Stack<List<string>> array;
-        [ThreadStatic] static StringBuilder builder;
+        [ThreadStatic] 
+        static Stack<List<string>> array;
+        [ThreadStatic] 
+        static StringBuilder builder;
 
-        [ThreadStatic] static Dictionary<Type, Dictionary<string, FieldInfo>> fieldInfo;
-        [ThreadStatic] static Dictionary<Type, Dictionary<string, PropertyInfo>> propertyInfo;
+        [ThreadStatic] 
+        static Dictionary<Type, Dictionary<string, FieldInfo>> fieldInfo;
+        [ThreadStatic] 
+        static Dictionary<Type, Dictionary<string, PropertyInfo>> propertyInfo;
 
         /// <summary>
         /// Gets or sets a value indicating whether the result string should be formatted for human-readability.
@@ -46,18 +50,67 @@ namespace Morix.Json
             IncludeProperties = true;
         }
 
+        /// <summary>
+        /// Serialize any object to string
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public static string Serialize(object obj)
         {
-            var json = Parse(obj);
-            return json.ToString();
+            var json = ParseAnonymous(obj);
+            return json.ToJson();
         }
 
+        /// <summary>
+        /// Deserialize string to given T type
+        /// </summary>
+        /// <typeparam name="T">Type to be convert to</typeparam>
+        /// <param name="json">Json string value to be parsed</param>
+        /// <returns></returns>
+        public static T Deserialize<T>(this string json)
+        {
+            // Initialize, if needed, the ThreadStatic variables
+            if (propertyInfo == null) propertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+            if (fieldInfo == null) fieldInfo = new Dictionary<Type, Dictionary<string, FieldInfo>>();
+            if (builder == null) builder = new StringBuilder();
+            if (array == null) array = new Stack<List<string>>();
+
+            //Remove all whitespace not within strings to make parsing simpler
+            builder.Length = 0;
+            for (int i = 0; i < json.Length; i++)
+            {
+                char c = json[i];
+                if (c == '"')
+                {
+                    i = AppendUntilStringEnd(true, i, json);
+                    continue;
+                }
+                if (char.IsWhiteSpace(c))
+                    continue;
+
+                builder.Append(c);
+            }
+
+            //Parse the thing!
+            return (T)ParseValue(typeof(T), builder.ToString());
+        }
+
+        /// <summary>
+        /// Parse string into JsonValue objects
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
         public static JsonValue Parse(string json)
         {
             return JsonReader.Parse(json);
         }
 
-        public static JsonValue Parse(object obj)
+        /// <summary>
+        /// Parse anonymous object to JsonValue
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        static JsonValue ParseAnonymous(object obj)
         {
             if (obj == null)
                 return JsonNull.Null;
@@ -132,7 +185,7 @@ namespace Morix.Json
                 var jarray = new JsonArray();
                 for (int i = 0; i < list.Count; i++)
                 {
-                    jarray.Add(Parse(list[i]));
+                    jarray.Add(ParseAnonymous(list[i]));
                 }
                 return jarray;
             }
@@ -142,7 +195,7 @@ namespace Morix.Json
                 var jobject = new JsonObject();
                 foreach (var key in dict.Keys)
                 {
-                    jobject.Add(key.ToString(), Parse(dict[key]));
+                    jobject.Add(key.ToString(), ParseAnonymous(dict[key]));
                 }
                 return jobject;
             }
@@ -162,7 +215,7 @@ namespace Morix.Json
                         if (value != null)
                         {
                             var name = GetMemberName(fieldInfos[i]);
-                            var jvalue = Parse(value);
+                            var jvalue = ParseAnonymous(value);
                             jobject.Add(name, jvalue);
                         }
                     }
@@ -179,7 +232,7 @@ namespace Morix.Json
                         if (value != null)
                         {
                             var name = GetMemberName(propertyInfo[i]);
-                            var jvalue = Parse(value);
+                            var jvalue = ParseAnonymous(value);
                             jobject.Add(name, jvalue);
                         }
                     }
@@ -198,34 +251,6 @@ namespace Morix.Json
             }
 
             return member.Name;
-        }
-
-        public static T Deserialize<T>(this string json)
-        {
-            // Initialize, if needed, the ThreadStatic variables
-            if (propertyInfo == null) propertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-            if (fieldInfo == null) fieldInfo = new Dictionary<Type, Dictionary<string, FieldInfo>>();
-            if (builder == null) builder = new StringBuilder();
-            if (array == null) array = new Stack<List<string>>();
-
-            //Remove all whitespace not within strings to make parsing simpler
-            builder.Length = 0;
-            for (int i = 0; i < json.Length; i++)
-            {
-                char c = json[i];
-                if (c == '"')
-                {
-                    i = AppendUntilStringEnd(true, i, json);
-                    continue;
-                }
-                if (char.IsWhiteSpace(c))
-                    continue;
-
-                builder.Append(c);
-            }
-
-            //Parse the thing!
-            return (T)ParseValue(typeof(T), builder.ToString());
         }
 
         static int AppendUntilStringEnd(bool appendEscapeCharacter, int startIdx, string json)

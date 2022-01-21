@@ -14,11 +14,7 @@ namespace Morix.Json.App
         {
             for (int i = 0; i < 100; i++)
             {
-              var text = Morix.Json.JsonConvert.Serialize(PrimitiveObject.Create());
-                if (text != null)
-                {
-                    System.IO.File.WriteAllText("Json.txt", text);
-                }
+                Morix.Json.JsonConvert.Serialize(PrimitiveObject.Create());
             }
         }
 
@@ -46,7 +42,7 @@ namespace Morix.Json.App
             var json = System.IO.File.ReadAllText("Json.txt");
             for (int i = 0; i < 10; i++)
             {
-                Morix.Json.JsonConvert.Parse(json);
+                Morix.Json.JsonConvert.Deserialize<PrimitiveObject>(json);
             }
         }
 
@@ -56,7 +52,7 @@ namespace Morix.Json.App
             var json = System.IO.File.ReadAllText("Json.txt");
             for (int i = 0; i < 10; i++)
             {
-                Newtonsoft.Json.Linq.JObject.Parse(json);
+                Newtonsoft.Json.JsonConvert.DeserializeObject<PrimitiveObject>(json);
             }
         }
 
@@ -66,7 +62,7 @@ namespace Morix.Json.App
             var json = System.IO.File.ReadAllText("Json.txt");
             for (int i = 0; i < 10; i++)
             {
-                System.Text.Json.JsonDocument.Parse(json);
+                System.Text.Json.JsonSerializer.Deserialize<PrimitiveObject>(json);
             }
         }
     }

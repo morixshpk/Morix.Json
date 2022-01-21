@@ -182,5 +182,225 @@ namespace Morix.Json
         {
             return decimal.Parse(this.innerValue, NumberStyles.Float, CultureInfo.InvariantCulture);
         }
+
+        public override byte GetByte(string name, byte value = 0)
+        {
+            byte result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToByte();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override SByte GetSByte(string name, SByte value = 0)
+        {
+            SByte result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToSByte();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override short GetShort(string name, short value = 0)
+        {
+            short result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToSByte();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override ushort GetUShort(string name, ushort value = 0)
+        {
+            ushort result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override int GetInt(string name, int value = 0)
+        {
+            int result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override uint GetUInt(string name, uint value = 0)
+        {
+            uint result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override long GetLong(string name, long value = 0)
+        {
+            long result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override ulong GetInt(string name, ulong value = 0)
+        {
+            ulong result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override float GetFloat(string name, float value = 0)
+        {
+            float result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override double GetDouble(string name, double value = 0)
+        {
+            double result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public override decimal GetDecimal(string name, decimal value = 0)
+        {
+            decimal result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsNumber)
+                        result = prop.ToUShort();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
     }
 }

@@ -83,14 +83,14 @@ namespace Morix.Json
             return 0;
         }
 
-        public override string ToString()
-        {
-            return JsonWriter.Serialize(this);
-        }
-
         public static implicit operator JsonValue(string value)
         {
             return new JsonString(value);
+        }
+
+        public virtual bool ToBolean()
+        {
+            throw new InvalidCastException();
         }
 
         public virtual byte ToByte()
@@ -139,13 +139,108 @@ namespace Morix.Json
         }
 
         public virtual double ToDouble()
-        { 
+        {
             throw new InvalidCastException();
         }
 
         public virtual decimal ToDecimal()
         {
             throw new InvalidCastException();
+        }
+
+        public virtual DateTime ToDateTime()
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual bool GetBoolean(string name, bool value = default)
+        {
+            bool result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsBoolean)
+                        result = prop.ToBolean();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
+        }
+
+        public virtual byte GetByte(string name, byte value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual SByte GetSByte(string name, SByte value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual short GetShort(string name, short value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual ushort GetUShort(string name, ushort value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual int GetInt(string name, int value = default)
+        {
+            throw new InvalidCastException();
+        }
+        
+        public virtual uint GetUInt(string name, uint value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual long GetLong(string name, long value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual ulong GetInt(string name, ulong value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual float GetFloat(string name, float value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual double GetDouble(string name, double value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual decimal GetDecimal(string name, decimal value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public virtual DateTime GetDateTime(string name, DateTime value = default)
+        {
+            throw new InvalidCastException();
+        }
+
+        public override string ToString()
+        {
+            return this.ToJson();
+        }
+
+        public string ToJson()
+        {
+            return JsonWriter.Serialize(this);
         }
     }
 }

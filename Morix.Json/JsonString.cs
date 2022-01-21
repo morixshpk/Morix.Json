@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -36,6 +37,31 @@ namespace Morix.Json
         public JsonString(DateTime value)
         {
             this.innerValue = value.ToString("o");
+        }
+
+        public override DateTime ToDateTime()
+        {
+            return DateTime.ParseExact(this.innerValue, "o", CultureInfo.InvariantCulture);
+        }
+        
+        public override DateTime GetDateTime(string name, DateTime value = default)
+        {
+            DateTime result = value;
+            try
+            {
+                var prop = this[name];
+
+                if (prop != null)
+                {
+                    if (prop.IsString)
+                        result = prop.ToDateTime();
+                }
+            }
+            catch
+            {
+                result = value;
+            }
+            return result;
         }
 
         public override bool Equals(object obj)

@@ -8,9 +8,21 @@ namespace Morix.Json.App
     {
         static void Main()
         {
-            //var s = new Competitors();
-            //s.Morix_Serialize();
+            var json = new JsonObject
+            {
+                ["str1"] = "string'string",
+                ["str2"] = "2'nd"
+            };
 
+            var text = json.ToJson();
+            var jobj = JsonConvert.Parse(text);
+            var text2 = jobj.ToJson();
+
+            if (text.Equals(text2))
+            {
+
+            }
+        
             //BenchmarkRunner.Run<Competitors>();
 
             MyTests();   
