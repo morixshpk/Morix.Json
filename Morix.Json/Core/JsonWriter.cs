@@ -72,28 +72,28 @@ namespace Morix.Json
 		{
 			switch (value.Type)
 			{
-				case JsonValueType.Null:
+				case JsonType.Null:
 					Write("null");
 					break;
 
-				case JsonValueType.Boolean:
+				case JsonType.Boolean:
 					Write(value.Value);
 					break;
 
-				case JsonValueType.Number:
+				case JsonType.Number:
 
 					Write(value.Value);
 					break;
 
-				case JsonValueType.String:
+				case JsonType.String:
 					WriteEncodedString(value.Value);
 					break;
 
-				case JsonValueType.Object:
+				case JsonType.Object:
 					Write(string.Format("JsonObject[{0}]", value.Count));
 					break;
 
-				case JsonValueType.Array:
+				case JsonType.Array:
 					Write(string.Format("JsonArray[{0}]", value.Count));
 					break;
 
@@ -183,18 +183,18 @@ namespace Morix.Json
 		{
 			switch (value.Type)
 			{
-				case JsonValueType.Null:
-				case JsonValueType.Boolean:
-				case JsonValueType.Number:
-				case JsonValueType.String:
+				case JsonType.Null:
+				case JsonType.Boolean:
+				case JsonType.Number:
+				case JsonType.String:
 					WriteEncodedJsonValue(value);
 					break;
 
-				case JsonValueType.Object:
+				case JsonType.Object:
 					Render((JsonObject)value);
 					break;
 
-				case JsonValueType.Array:
+				case JsonType.Array:
 					Render((JsonArray)value);
 					break;
 

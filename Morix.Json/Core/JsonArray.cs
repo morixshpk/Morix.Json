@@ -9,11 +9,6 @@ namespace Morix.Json
 	public class JsonArray : JsonValue, IEnumerable<JsonValue>
 	{
 		private readonly IList<JsonValue> items;
-
-		public override JsonValueType Type
-		{
-			get { return JsonValueType.Array; }
-		}
 		
 		public override int Count { 
 			get { return items.Count; }
@@ -29,7 +24,7 @@ namespace Morix.Json
 				}
 				else
 				{
-					return JsonNull.Null;
+					return JsonValue.Null;
 				}
 			}
 			set
@@ -50,7 +45,7 @@ namespace Morix.Json
 			}
 		}
 
-		public JsonArray()
+		public JsonArray() : base(JsonType.Array)
 		{
 			this.items = new List<JsonValue>();
 		}

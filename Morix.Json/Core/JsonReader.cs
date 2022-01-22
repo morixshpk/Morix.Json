@@ -44,7 +44,7 @@ namespace Morix.Json
 					return ReadArray();
 
 				case '"':
-					return new JsonString(ReadString());
+					return new JsonValue(ReadString());
 
 				case '-':
 					return ReadNumber();
@@ -67,7 +67,7 @@ namespace Morix.Json
 		private JsonValue ReadNull()
 		{
 			this.scanner.Assert("null");
-			return JsonNull.Null;
+			return JsonValue.Null;
 		}
 
 		private JsonValue ReadBoolean()
@@ -76,11 +76,11 @@ namespace Morix.Json
 			{
 				case 't':
 					this.scanner.Assert("true");
-					return new JsonBoolean(true);
+					return new JsonValue(true);
 
 				case 'f':
 					this.scanner.Assert("false");
-					return new JsonBoolean(false);
+					return new JsonValue(false);
 
 				default:
 					throw new JsonParseException(
@@ -139,7 +139,7 @@ namespace Morix.Json
 				ReadDigits(builder);
 			}
 
-			return new JsonNumber(builder.ToString());
+			return new JsonValue(JsonType.Number, builder.ToString());
 		}
 
 		private string ReadString()

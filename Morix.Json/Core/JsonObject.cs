@@ -10,11 +10,6 @@ namespace Morix.Json
     {
         private readonly IDictionary<string, JsonValue> properties;
 
-        public override JsonValueType Type
-        {
-            get { return JsonValueType.Object; }
-        }
-
         public override int Count
         {
             get
@@ -45,7 +40,7 @@ namespace Morix.Json
                 }
                 else
                 {
-                    return JsonNull.Null;
+                    return JsonValue.Null;
                 }
             }
             set
@@ -54,14 +49,14 @@ namespace Morix.Json
             }
         }
 
-        public JsonObject()
+        public JsonObject() :base(JsonType.Object)
         {
             properties = new Dictionary<string, JsonValue>();
         }
 
         public JsonObject Add(string key)
         {
-            return Add(key, JsonNull.Null);
+            return Add(key, JsonValue.Null);
         }
 
         public JsonObject Add(string key, JsonValue value)

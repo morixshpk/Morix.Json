@@ -8,46 +8,17 @@ using System.Text;
 
 namespace Morix.Json
 {
-    public static class JsonConvert
+    internal class JsonConverter
     {
-        [ThreadStatic] 
-        static Stack<List<string>> array;
-        [ThreadStatic] 
-        static StringBuilder builder;
+        Stack<List<string>> array;
+        StringBuilder builder;
 
-        [ThreadStatic] 
-        static Dictionary<Type, Dictionary<string, FieldInfo>> fieldInfo;
-        [ThreadStatic] 
-        static Dictionary<Type, Dictionary<string, PropertyInfo>> propertyInfo;
+        static readonly Dictionary<Type, Dictionary<string, FieldInfo>> fieldInfo = new Dictionary<Type, Dictionary<string, FieldInfo>>();
+        static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> propertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the result string should be formatted for human-readability.
-        /// </summary>
-        public static bool Beautify { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether JsonObject properties should be written in a deterministic order.
-        /// </summary>
-        public static bool SortProperties { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to include propertis from serialization/deserialization. 
-        /// Default true
-        /// </summary>
-        public static bool IncludeProperties { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether to include fields from serialization/deserialization. 
-        /// Default true
-        /// </summary>
-        public static bool IncludeFields { get; set; }
-
-        static JsonConvert()
+        public JsonConverter()
         {
-            propertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-            fieldInfo = new Dictionary<Type, Dictionary<string, FieldInfo>>();
-            IncludeFields = true;
-            IncludeProperties = true;
+
         }
 
         /// <summary>
@@ -55,7 +26,7 @@ namespace Morix.Json
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string Serialize(object obj)
+        public string Serialize(object obj)
         {
             var json = ParseAnonymous(obj);
             return json.ToJson();
@@ -67,13 +38,17 @@ namespace Morix.Json
         /// <typeparam name="T">Type to be convert to</typeparam>
         /// <param name="json">Json string value to be parsed</param>
         /// <returns></returns>
-        public static T Deserialize<T>(this string json)
+        public T Deserialize<T>(string json)
         {
-            // Initialize, if needed, the ThreadStatic variables
-            if (propertyInfo == null) propertyInfo = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-            if (fieldInfo == null) fieldInfo = new Dictionary<Type, Dictionary<string, FieldInfo>>();
-            if (builder == null) builder = new StringBuilder();
-            if (array == null) array = new Stack<List<string>>();
+            if (builder == null)
+            {
+                builder = new StringBuilder();
+            }
+
+            if (array == null)
+            {
+                array = new Stack<List<string>>();
+            }
 
             //Remove all whitespace not within strings to make parsing simpler
             builder.Length = 0;
@@ -96,89 +71,79 @@ namespace Morix.Json
         }
 
         /// <summary>
-        /// Parse string into JsonValue objects
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        public static JsonValue Parse(string json)
-        {
-            return JsonReader.Parse(json);
-        }
-
-        /// <summary>
         /// Parse anonymous object to JsonValue
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        static JsonValue ParseAnonymous(object obj)
+        JsonValue ParseAnonymous(object obj)
         {
             if (obj == null)
-                return JsonNull.Null;
+                return JsonValue.Null;
 
             var type = obj.GetType();
             if (type == typeof(string))
             {
-                return new JsonString(obj.ToString());
+                return new JsonValue(obj.ToString());
             }
             else if (type == typeof(char))
             {
-                return new JsonString(obj.ToString());
+                return new JsonValue(obj.ToString());
             }
             else if (type == typeof(bool))
             {
-                return new JsonBoolean((bool)obj);
+                return new JsonValue((bool)obj);
             }
             else if (type == typeof(byte))
             {
-                return new JsonNumber((byte)obj);
+                return new JsonValue((byte)obj);
             }
             else if (type == typeof(sbyte))
             {
-                return new JsonNumber((sbyte)obj);
+                return new JsonValue((sbyte)obj);
             }
             else if (type == typeof(short))
             {
-                return new JsonNumber((short)obj);
+                return new JsonValue((short)obj);
             }
             else if (type == typeof(ushort))
             {
-                return new JsonNumber((ushort)obj);
+                return new JsonValue((ushort)obj);
             }
             else if (type == typeof(int))
             {
-                return new JsonNumber((int)obj);
+                return new JsonValue((int)obj);
             }
             else if (type == typeof(uint))
             {
-                return new JsonNumber((uint)obj);
+                return new JsonValue((uint)obj);
             }
             else if (type == typeof(long))
             {
-                return new JsonNumber((long)obj);
+                return new JsonValue((long)obj);
             }
             else if (type == typeof(ulong))
             {
-                return new JsonNumber((ulong)obj);
+                return new JsonValue((ulong)obj);
             }
             else if (type == typeof(float))
             {
-                return new JsonNumber((float)obj);
+                return new JsonValue((float)obj);
             }
             else if (type == typeof(double))
             {
-                return new JsonNumber((double)obj);
+                return new JsonValue((double)obj);
             }
             else if (type == typeof(decimal))
             {
-                return new JsonNumber((decimal)obj);
+                return new JsonValue((decimal)obj);
             }
             else if (type == typeof(DateTime))
             {
-                return new JsonString((DateTime)obj);
+                return new JsonValue((DateTime)obj);
             }
             else if (type.IsEnum)
             {
-                return new JsonString(obj.ToString());
+                return new JsonValue(obj.ToString());
             }
             else if (obj is IList list)
             {
@@ -202,7 +167,7 @@ namespace Morix.Json
             else
             {
                 var jobject = new JsonObject();
-                if (IncludeFields)
+                if (JsonConvert.IncludeFields)
                 {
                     FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
                     for (int i = 0; i < fieldInfos.Length; i++)
@@ -220,7 +185,7 @@ namespace Morix.Json
                         }
                     }
                 }
-                if (IncludeProperties)
+                if (JsonConvert.IncludeProperties)
                 {
                     PropertyInfo[] propertyInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
                     for (int i = 0; i < propertyInfo.Length; i++)
@@ -241,7 +206,12 @@ namespace Morix.Json
             }
         }
 
-        static string GetMemberName(MemberInfo member)
+        /// <summary>
+        /// Get field or property name
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        string GetMemberName(MemberInfo member)
         {
             if (member.IsDefined(typeof(DataMemberAttribute), true))
             {
@@ -253,10 +223,10 @@ namespace Morix.Json
             return member.Name;
         }
 
-        static int AppendUntilStringEnd(bool appendEscapeCharacter, int startIdx, string json)
+        int AppendUntilStringEnd(bool appendEscapeCharacter, int startIndex, string json)
         {
-            builder.Append(json[startIdx]);
-            for (int i = startIdx + 1; i < json.Length; i++)
+            builder.Append(json[startIndex]);
+            for (int i = startIndex + 1; i < json.Length; i++)
             {
                 if (json[i] == '\\')
                 {
@@ -275,8 +245,8 @@ namespace Morix.Json
             }
             return json.Length - 1;
         }
-        
-        static List<string> Split(string json)
+
+        List<string> Split(string json)
         {
             List<string> splitArray = array.Count > 0 ? array.Pop() : new List<string>();
             splitArray.Clear();
@@ -318,7 +288,7 @@ namespace Morix.Json
             return splitArray;
         }
 
-        static object ParseValue(Type type, string json)
+        object ParseValue(Type type, string json)
         {
             if (type == typeof(string))
             {
@@ -459,7 +429,7 @@ namespace Morix.Json
             return null;
         }
 
-        static object ParseAnonymousValue(string json)
+        object ParseAnonymousValue(string json)
         {
             if (json.Length == 0)
                 return null;
@@ -507,7 +477,7 @@ namespace Morix.Json
             return null;
         }
 
-        static object ParseObject(Type type, string json)
+        object ParseObject(Type type, string json)
         {
             object instance = FormatterServices.GetUninitializedObject(type);
 
@@ -534,16 +504,16 @@ namespace Morix.Json
                 string key = elems[i].Substring(1, elems[i].Length - 2);
                 string value = elems[i + 1];
 
-                if (IncludeFields && nameToField.TryGetValue(key, out FieldInfo fieldInfo))
+                if (JsonConvert.IncludeFields && nameToField.TryGetValue(key, out FieldInfo fieldInfo))
                     fieldInfo.SetValue(instance, ParseValue(fieldInfo.FieldType, value));
-                else if (IncludeProperties && nameToProperty.TryGetValue(key, out PropertyInfo propertyInfo))
+                else if (JsonConvert.IncludeProperties && nameToProperty.TryGetValue(key, out PropertyInfo propertyInfo))
                     propertyInfo.SetValue(instance, ParseValue(propertyInfo.PropertyType, value), null);
             }
 
             return instance;
         }
 
-        static Dictionary<string, T> CreateMemberNameDictionary<T>(T[] members) where T : MemberInfo
+        Dictionary<string, T> CreateMemberNameDictionary<T>(T[] members) where T : MemberInfo
         {
             Dictionary<string, T> nameToMember = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < members.Length; i++)
@@ -559,10 +529,8 @@ namespace Morix.Json
                     if (!string.IsNullOrEmpty(dataMemberAttribute.Name))
                         name = dataMemberAttribute.Name;
                 }
-
                 nameToMember.Add(name, member);
             }
-
             return nameToMember;
         }
     }

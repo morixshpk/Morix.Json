@@ -8,7 +8,7 @@ namespace Morix.Json
 	/// <summary>
 	/// Enumerates the types of Json values.
 	/// </summary>
-	public enum JsonValueType : byte
+	public enum JsonType : byte
 	{
 		/// <summary>
 		/// A null value.
