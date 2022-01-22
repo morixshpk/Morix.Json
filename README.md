@@ -9,7 +9,7 @@ Include the namespace
 using Morix.Json
 
 
-Flunet API support for creating json objects
+Fluent API support for creating json objects
 
 ```
 var json = new JsonObject
@@ -28,20 +28,33 @@ Debug.Print(text);
 ```
 
 Serialize/Deserialize Objects
+You can serialize/Deserialize any class or struct with JsonConvert Class.
+
 
 ```
-public class Business {
-  public string Name { get; set; }
-  public int Founded { get; set; }
-  public List<double> Location { get; set; }
+public class Business
+{
+	[JsonProperty("n")]
+	public string Name { get; set; }
+
+	[JsonProperty("f")]
+	public int Founded { get; set; }
+
+	[JsonIgnore]
+	public string PhoneNumber;
+	
+	[JsonProperty("l")]
+	public List<double> Location { get; set; }
 }
 
 var business = new Business
 {
-  Name = "Morix",
-  Founded = 2015,
-  Location = new List<double> { 41.321693420410156f, 19.799325942993164f }
+	Name = "My business",
+	Founded = 2010,
+	PhoneNumber = "+355 69-40-00-111",
+	Location = new List<double> { 41.321693420410156, 19.799325942993164 }
 };
+
 
 //serialize
 var json = JsonConvert.Serialize(business);
@@ -50,4 +63,7 @@ var json = JsonConvert.Serialize(business);
 var back = JsonConvert.Deserialize<Business>(json);
   ```
   
+Using  JsonIgnore attribute to properties or fields you can igrnore serialization/deserialization of your data.
+Also youc an set custom names to proeprty or fields with JsonProperty attribute.
+
 
