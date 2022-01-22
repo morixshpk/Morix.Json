@@ -1,17 +1,16 @@
-﻿using System.Runtime.Serialization;
-
+﻿
 namespace Morix.Json.Tests
 {
-    class IgnoreDataMemberObject
+    public class JsonPropertyObject
     {
+        [JsonProperty("a")]
         public int A;
 
-        [IgnoreDataMember]
         public int B;
 
+        [JsonProperty("c")]
         public int C { get; set; }
 
-        [IgnoreDataMember]
         public int D { get; set; }
     }
 }

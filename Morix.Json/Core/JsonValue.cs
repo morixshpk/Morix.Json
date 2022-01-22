@@ -332,7 +332,7 @@ namespace Morix.Json
 
         public bool GetBoolean(string name, bool value = default)
         {
-            if (IsBoolean)
+            if (this.IsObject)
             {
                 bool result = value;
                 try
@@ -356,216 +356,190 @@ namespace Morix.Json
 
         public byte GetByte(string name, byte value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                byte result = value;
+
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToByte();
+                        return prop.ToByte();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public SByte GetSByte(string name, SByte value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                SByte result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToSByte();
+                        return prop.ToSByte();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public short GetShort(string name, short value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                short result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToSByte();
+                        return prop.ToShort();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public ushort GetUShort(string name, ushort value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                ushort result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToUShort();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public int GetInt(string name, int value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                int result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToInt();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
         
         public uint GetUInt(string name, uint value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                uint result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToUInt();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public long GetLong(string name, long value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                long result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToLong();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public ulong GetULong(string name, ulong value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                ulong result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToULong();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public float GetFloat(string name, float value = default)
         {
-            if (IsObject)
+            if (this.IsObject)
             {
-                float result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToFloat();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
@@ -574,22 +548,19 @@ namespace Morix.Json
         {
             if (this.IsObject)
             {
-                double result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToDouble();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
@@ -598,99 +569,85 @@ namespace Morix.Json
         {
             if (this.IsObject)
             {
-                decimal result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsNumber)
                     {
-                        if (prop.IsNumber)
-                            result = prop.ToUShort();
+                        return prop.ToDecimal();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
             throw new InvalidCastException();
         }
 
         public string GetString(string name, string value = "")
         {
-            if (Type == JsonType.Object)
+            if (this.IsObject)
             {
-                string result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsString)
                     {
-                        if (prop.IsString)
-                            result = prop.ToString();
+                        return prop.Value;
                     }
                 }
                 catch
                 {
-                    result = value;
+
                 }
-                return result;
+                return value;
             }
-            else
-                throw new InvalidCastException();
+            throw new InvalidCastException();
         }
 
         public DateTime GetDateTime(string name, DateTime value = default)
         {
-            if (Type == JsonType.Object)
+            if (this.IsObject)
             {
-                DateTime result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsString)
                     {
-                        if (prop.IsString)
-                            result = prop.ToDateTime();
+                        return prop.ToDateTime();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
-            else
-                throw new InvalidCastException();
+            throw new InvalidCastException();
         }
 
         public Guid GetGuid(string name, Guid value = default)
         {
-            if (Type == JsonType.Object)
+            if (this.IsObject)
             {
-                Guid result = value;
                 try
                 {
                     var prop = this[name];
 
-                    if (prop != null)
+                    if (prop != null && prop.IsString)
                     {
-                        if (prop.IsString)
-                            result = prop.ToGuid();
+                        return prop.ToGuid();
                     }
                 }
                 catch
                 {
-                    result = value;
                 }
-                return result;
+                return value;
             }
-            else
-                throw new InvalidCastException();
+            throw new InvalidCastException();
         }
 
         public override string ToString()

@@ -8,27 +8,29 @@ using System.Diagnostics;
 
 namespace Morix.Json.Tests
 {
-    [TestClass]
+
+	[TestClass]
 	public partial class Tests
 	{
 		[TestMethod]
-		public void TestDebug()
+		public void Documentaion()
 		{
-			var jobj = new JsonObject
+			var business = new Business
 			{
-				["null"] = new JsonValue(),
-				["bool"] = new JsonValue(true),
-				["number"] = new JsonValue(123),
-				["string"] = new JsonValue("string"),
-				["datetime"] = new JsonValue(new DateTime(2022, 1, 15, 14, 59, 33, DateTimeKind.Utc)),
-				["list"] = new JsonArray(
-					new JsonValue(1),
-					new JsonValue(2.1f),
-					new JsonValue(3.3d)),
+				Name = "My business",
+				Founded = 2010,
+				PhoneNumber = "+355 69-40-00-111",
+				Location = new List<double> { 41.321693420410156, 19.799325942993164 }
 			};
 
-			var json = jobj.ToJson();
+			//serialize
+			var json = JsonConvert.Serialize(business);
+
+			//deserialize from text to object
+			var back = JsonConvert.Deserialize<Business>(json);
+
 			Debug.Print(json);
+			Debug.Print(back.ToString());
 		}
 
 		[TestMethod]
@@ -411,7 +413,7 @@ namespace Morix.Json.Tests
 		[TestMethod]
 		public void TestIgnoreDataMember()
 		{
-			var value = JsonConvert.Deserialize<IgnoreDataMemberObject>("{\"A\":123,\"B\":456,\"Ignored\":10,\"C\":789,\"D\":14}");
+			var value = JsonConvert.Deserialize<JsonIgnoreObject>("{\"A\":123,\"B\":456,\"Ignored\":10,\"C\":789,\"D\":14}");
 			Assert.IsNotNull(value);
 			Assert.AreEqual(123, value.A);
 			Assert.AreEqual(0, value.B);
@@ -420,10 +422,9 @@ namespace Morix.Json.Tests
 		}
 
 		[TestMethod]
-		public void TestDataMemberObject()
+		public void TestJsonPropertyObject()
 		{
-			
-			DataMemberObject value = JsonConvert.Deserialize<DataMemberObject>("{\"a\":123,\"B\":456,\"c\":789,\"D\":14}");
+			var value = JsonConvert.Deserialize<JsonPropertyObject>("{\"a\":123,\"B\":456,\"c\":789,\"D\":14}");
 			Assert.IsNotNull(value);
 			Assert.AreEqual(123, value.A);
 			Assert.AreEqual(456, value.B);
@@ -521,11 +522,11 @@ namespace Morix.Json.Tests
 		}
 
 		[TestMethod]
-		public void TestIgnoreDataMemberObject()
+		public void TestJsonIgnoreObject()
 		{
 			Assert.AreEqual("{\"A\":10,\"C\":30}",
 				JsonConvert.Serialize(
-				new IgnoreDataMemberObject
+				new JsonIgnoreObject
 				{
 					A = 10,
 					B = 20,
@@ -551,8 +552,8 @@ namespace Morix.Json.Tests
 			var back = JsonConvert.Deserialize<Business>(json);
 
 			if (json.Equals(back))
-			{ 
-				
+			{
+
 			}
 
 		}

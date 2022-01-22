@@ -172,7 +172,7 @@ namespace Morix.Json
                     FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
                     for (int i = 0; i < fieldInfos.Length; i++)
                     {
-                        if (fieldInfos[i].IsDefined(typeof(IgnoreDataMemberAttribute), true))
+                        if (fieldInfos[i].IsDefined(typeof(JsonIgnore), true))
                             continue;
 
                         object value = fieldInfos[i].GetValue(obj);
@@ -190,7 +190,7 @@ namespace Morix.Json
                     PropertyInfo[] propertyInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
                     for (int i = 0; i < propertyInfo.Length; i++)
                     {
-                        if (!propertyInfo[i].CanRead || propertyInfo[i].IsDefined(typeof(IgnoreDataMemberAttribute), true))
+                        if (!propertyInfo[i].CanRead || propertyInfo[i].IsDefined(typeof(JsonIgnore), true))
                             continue;
 
                         object value = propertyInfo[i].GetValue(obj, null);
@@ -519,15 +519,15 @@ namespace Morix.Json
             for (int i = 0; i < members.Length; i++)
             {
                 T member = members[i];
-                if (member.IsDefined(typeof(IgnoreDataMemberAttribute), true))
+                if (member.IsDefined(typeof(JsonIgnore), true))
                     continue;
 
                 string name = member.Name;
-                if (member.IsDefined(typeof(DataMemberAttribute), true))
+                if (member.IsDefined(typeof(JsonProperty), true))
                 {
-                    DataMemberAttribute dataMemberAttribute = (DataMemberAttribute)Attribute.GetCustomAttribute(member, typeof(DataMemberAttribute), true);
-                    if (!string.IsNullOrEmpty(dataMemberAttribute.Name))
-                        name = dataMemberAttribute.Name;
+                    JsonProperty jsonProperty = (JsonProperty)Attribute.GetCustomAttribute(member, typeof(JsonProperty), true);
+                    if (!string.IsNullOrEmpty(jsonProperty.Name))
+                        name = jsonProperty.Name;
                 }
                 nameToMember.Add(name, member);
             }

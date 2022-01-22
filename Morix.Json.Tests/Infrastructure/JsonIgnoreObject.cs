@@ -2,17 +2,16 @@
 
 namespace Morix.Json.Tests
 {
-    public class DataMemberObject
+    public class JsonIgnoreObject
     {
-        [DataMember(Name = "a")]
         public int A;
 
-        [DataMember()]
+        [JsonIgnore]
         public int B;
 
-        [DataMember(Name = "c")]
         public int C { get; set; }
-        
+
+        [JsonIgnore]
         public int D { get; set; }
     }
 }
