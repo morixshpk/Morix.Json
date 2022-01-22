@@ -8,7 +8,6 @@ using BenchmarkDotNet.Engines;
 
 namespace Morix.Json.App
 {
-    [SimpleJob(RunStrategy.ColdStart, launchCount: 100)]
     public class Competitors
     {
         private static string jsonText = "";
