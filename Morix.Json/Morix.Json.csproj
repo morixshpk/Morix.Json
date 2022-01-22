@@ -8,12 +8,12 @@
     <RepositoryUrl>https://github.com/morixshpk/Morix.Json</RepositoryUrl>
     <PackageTags>json,serialize, deserialize,build json</PackageTags>
     <VersionPrefix>1.0.0</VersionPrefix>
-    <AssemblyVersion>1.0.3</AssemblyVersion>
-    <FileVersion>1.0.3</FileVersion>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <UserSecretsId>0ecbe7fc-d559-4fc3-8787-9d85f8384d06</UserSecretsId>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
