@@ -28,7 +28,7 @@ namespace Morix.Json
         /// <returns></returns>
         public string Serialize(object obj)
         {
-            var json = ParseAnonymous(obj);
+            var json = ParseObject(obj);
             return json.ToJson();
         }
 
@@ -75,7 +75,7 @@ namespace Morix.Json
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        JsonValue ParseAnonymous(object obj)
+        JsonValue ParseObject(object obj)
         {
             if (obj == null)
                 return JsonValue.Null;
@@ -150,7 +150,7 @@ namespace Morix.Json
                 var jarray = new JsonArray();
                 for (int i = 0; i < list.Count; i++)
                 {
-                    jarray.Add(ParseAnonymous(list[i]));
+                    jarray.Add(ParseObject(list[i]));
                 }
                 return jarray;
             }
@@ -160,90 +160,53 @@ namespace Morix.Json
                 var jobject = new JsonObject();
                 foreach (var key in dict.Keys)
                 {
-                    jobject.Add(key.ToString(), ParseAnonymous(dict[key]));
+                    jobject.Add(key.ToString(), ParseObject(dict[key]));
                 }
                 return jobject;
             }
             else
             {
                 var jobject = new JsonObject();
+
                 if (JsonConvert.IncludeFields)
                 {
+                    var nameToFields = GetFields(type);
+
                     FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-                    for (int i = 0; i < fieldInfos.Length; i++)
+                    foreach (var field in nameToFields.Values)
                     {
-                        if (fieldInfos[i].IsDefined(typeof(JsonIgnore), true))
+                        if (field.IsDefined(typeof(JsonIgnore), true))
                             continue;
 
-                        object value = fieldInfos[i].GetValue(obj);
+                        object value = field.GetValue(obj);
 
                         if (value != null)
                         {
-                            var name = GetMemberName(fieldInfos[i]);
-                            var jvalue = ParseAnonymous(value);
+                            var name = GetMemberName(field);
+                            var jvalue = ParseObject(value);
                             jobject.Add(name, jvalue);
                         }
                     }
                 }
                 if (JsonConvert.IncludeProperties)
                 {
-                    PropertyInfo[] propertyInfo = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-                    for (int i = 0; i < propertyInfo.Length; i++)
+                    var nameToProperties = GetProperties(type);
+                    foreach (var property in nameToProperties.Values)
                     {
-                        if (!propertyInfo[i].CanRead || propertyInfo[i].IsDefined(typeof(JsonIgnore), true))
+                        if (!property.CanRead || property.IsDefined(typeof(JsonIgnore), true))
                             continue;
 
-                        object value = propertyInfo[i].GetValue(obj, null);
+                        object value = property.GetValue(obj, null);
                         if (value != null)
                         {
-                            var name = GetMemberName(propertyInfo[i]);
-                            var jvalue = ParseAnonymous(value);
+                            var name = GetMemberName(property);
+                            var jvalue = ParseObject(value);
                             jobject.Add(name, jvalue);
                         }
                     }
                 }
                 return jobject;
             }
-        }
-
-        /// <summary>
-        /// Get field or property name
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        string GetMemberName(MemberInfo member)
-        {
-            if (member.IsDefined(typeof(DataMemberAttribute), true))
-            {
-                DataMemberAttribute dataMemberAttribute = (DataMemberAttribute)Attribute.GetCustomAttribute(member, typeof(DataMemberAttribute), true);
-                if (!string.IsNullOrEmpty(dataMemberAttribute.Name))
-                    return dataMemberAttribute.Name;
-            }
-
-            return member.Name;
-        }
-
-        int AppendUntilStringEnd(bool appendEscapeCharacter, int startIndex, string json)
-        {
-            builder.Append(json[startIndex]);
-            for (int i = startIndex + 1; i < json.Length; i++)
-            {
-                if (json[i] == '\\')
-                {
-                    if (appendEscapeCharacter)
-                        builder.Append(json[i]);
-                    builder.Append(json[i + 1]);
-                    i++;//Skip next character as it is escaped
-                }
-                else if (json[i] == '"')
-                {
-                    builder.Append(json[i]);
-                    return i;
-                }
-                else
-                    builder.Append(json[i]);
-            }
-            return json.Length - 1;
         }
 
         List<string> Split(string json)
@@ -286,6 +249,54 @@ namespace Morix.Json
             splitArray.Add(builder.ToString());
 
             return splitArray;
+        }
+
+        object ParseValue(string json)
+        {
+            if (json.Length == 0)
+                return null;
+            if (json[0] == '{' && json[json.Length - 1] == '}')
+            {
+                List<string> elems = Split(json);
+                if (elems.Count % 2 != 0)
+                    return null;
+                var dict = new Dictionary<string, object>(elems.Count / 2);
+                for (int i = 0; i < elems.Count; i += 2)
+                    dict[elems[i].Substring(1, elems[i].Length - 2)] = ParseValue(elems[i + 1]);
+                return dict;
+            }
+            if (json[0] == '[' && json[json.Length - 1] == ']')
+            {
+                List<string> items = Split(json);
+                var finalList = new List<object>(items.Count);
+                for (int i = 0; i < items.Count; i++)
+                    finalList.Add(ParseValue(items[i]));
+                return finalList;
+            }
+            if (json[0] == '"' && json[json.Length - 1] == '"')
+            {
+                string str = json.Substring(1, json.Length - 2);
+                return str.Replace("\\", string.Empty);
+            }
+            if (char.IsDigit(json[0]) || json[0] == '-')
+            {
+                if (json.Contains("."))
+                {
+                    double.TryParse(json, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double result);
+                    return result;
+                }
+                else
+                {
+                    int.TryParse(json, out int result);
+                    return result;
+                }
+            }
+            if (json == "true")
+                return true;
+            if (json == "false")
+                return false;
+            // handles json == "null" as well as invalid JSON
+            return null;
         }
 
         object ParseValue(Type type, string json)
@@ -419,61 +430,13 @@ namespace Morix.Json
             }
             if (type == typeof(object))
             {
-                return ParseAnonymousValue(json);
+                return ParseValue(json);
             }
             if (json[0] == '{' && json[json.Length - 1] == '}')
             {
                 return ParseObject(type, json);
             }
 
-            return null;
-        }
-
-        object ParseAnonymousValue(string json)
-        {
-            if (json.Length == 0)
-                return null;
-            if (json[0] == '{' && json[json.Length - 1] == '}')
-            {
-                List<string> elems = Split(json);
-                if (elems.Count % 2 != 0)
-                    return null;
-                var dict = new Dictionary<string, object>(elems.Count / 2);
-                for (int i = 0; i < elems.Count; i += 2)
-                    dict[elems[i].Substring(1, elems[i].Length - 2)] = ParseAnonymousValue(elems[i + 1]);
-                return dict;
-            }
-            if (json[0] == '[' && json[json.Length - 1] == ']')
-            {
-                List<string> items = Split(json);
-                var finalList = new List<object>(items.Count);
-                for (int i = 0; i < items.Count; i++)
-                    finalList.Add(ParseAnonymousValue(items[i]));
-                return finalList;
-            }
-            if (json[0] == '"' && json[json.Length - 1] == '"')
-            {
-                string str = json.Substring(1, json.Length - 2);
-                return str.Replace("\\", string.Empty);
-            }
-            if (char.IsDigit(json[0]) || json[0] == '-')
-            {
-                if (json.Contains("."))
-                {
-                    double.TryParse(json, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out double result);
-                    return result;
-                }
-                else
-                {
-                    int.TryParse(json, out int result);
-                    return result;
-                }
-            }
-            if (json == "true")
-                return true;
-            if (json == "false")
-                return false;
-            // handles json == "null" as well as invalid JSON
             return null;
         }
 
@@ -486,16 +449,8 @@ namespace Morix.Json
             if (elems.Count % 2 != 0)
                 return instance;
 
-            if (!fieldInfo.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
-            {
-                nameToField = CreateMemberNameDictionary(type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                fieldInfo.Add(type, nameToField);
-            }
-            if (!propertyInfo.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))
-            {
-                nameToProperty = CreateMemberNameDictionary(type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                propertyInfo.Add(type, nameToProperty);
-            }
+            var nameToField = GetFields(type);
+            var nameToProperty = GetProperties(type);
 
             for (int i = 0; i < elems.Count; i += 2)
             {
@@ -513,6 +468,29 @@ namespace Morix.Json
             return instance;
         }
 
+        /// <summary>
+        /// Get field or property name
+        /// </summary>
+        /// <param name="member"></param>
+        /// <returns></returns>
+        string GetMemberName(MemberInfo member)
+        {
+            if (member.IsDefined(typeof(DataMemberAttribute), true))
+            {
+                DataMemberAttribute dataMemberAttribute = (DataMemberAttribute)Attribute.GetCustomAttribute(member, typeof(DataMemberAttribute), true);
+                if (!string.IsNullOrEmpty(dataMemberAttribute.Name))
+                    return dataMemberAttribute.Name;
+            }
+
+            return member.Name;
+        }
+
+        /// <summary>
+        /// Get members in a dictionary for a specific type
+        /// </summary>
+        /// <typeparam name="T">Type to get fiels/properties</typeparam>
+        /// <param name="members">Members in array</param>
+        /// <returns></returns>
         Dictionary<string, T> CreateMemberNameDictionary<T>(T[] members) where T : MemberInfo
         {
             Dictionary<string, T> nameToMember = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
@@ -532,6 +510,50 @@ namespace Morix.Json
                 nameToMember.Add(name, member);
             }
             return nameToMember;
+        }
+
+        int AppendUntilStringEnd(bool appendEscapeCharacter, int startIndex, string json)
+        {
+            builder.Append(json[startIndex]);
+            for (int i = startIndex + 1; i < json.Length; i++)
+            {
+                if (json[i] == '\\')
+                {
+                    if (appendEscapeCharacter)
+                        builder.Append(json[i]);
+                    builder.Append(json[i + 1]);
+                    i++;//Skip next character as it is escaped
+                }
+                else if (json[i] == '"')
+                {
+                    builder.Append(json[i]);
+                    return i;
+                }
+                else
+                    builder.Append(json[i]);
+            }
+            return json.Length - 1;
+        }
+
+        private Dictionary<string, FieldInfo> GetFields(Type type)
+        {
+            if (!fieldInfo.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
+            {
+                nameToField = CreateMemberNameDictionary(type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
+                fieldInfo.Add(type, nameToField);
+            }
+
+            return nameToField;
+        }
+
+        private Dictionary<string, PropertyInfo> GetProperties(Type type)
+        {
+            if (!propertyInfo.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))
+            {
+                nameToProperty = CreateMemberNameDictionary(type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
+                propertyInfo.Add(type, nameToProperty);
+            }
+            return nameToProperty;
         }
     }
 }
