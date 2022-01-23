@@ -13,7 +13,6 @@ namespace Morix.Json.App
         [Benchmark]
         public void Morix_Serialize()
         {
-            var data = DataObject.Create();
             var obj = Morix.Json.JsonConvert.Serialize(DataObject.Create());
             if (obj == null)
             {

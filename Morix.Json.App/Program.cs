@@ -45,6 +45,8 @@ namespace Morix.Json.App
 
             //BenchmarkRunner.Run<Competitors>();
 
+            MyTests(1);
+            MyTests(1);
             MyTests(100);
             MyTests(1000);
             MyTests(100000);

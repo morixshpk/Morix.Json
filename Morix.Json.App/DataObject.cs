@@ -8,22 +8,22 @@ namespace Morix.Json.App
     {
         private static readonly Random _rnd = new Random();
 
-        public int Int { get; set; }
-        public long Long { get; set; }
+        public int DataInt { get; set; }
+        public long DataLong { get; set; }
 
-        public double Double { get; set; }
-        public DateTime Time { get; set; }
+        public double DataDouble { get; set; }
+        public DateTime DataDateTime { get; set; }
  
-        public string String { get; set; }
+        public string DataString { get; set; }
 
         public static DataObject Create()
         {
             var data = new DataObject
             {
-                Int = (byte)_rnd.Next(0, int.MaxValue),
-                Long = (int)_rnd.Next(0, int.MaxValue),
-                Double = _rnd.NextDouble(),
-                String = _rnd.NextDouble().ToString()
+                DataInt = (byte)_rnd.Next(0, int.MaxValue),
+                DataLong = (int)_rnd.Next(0, int.MaxValue),
+                DataDouble = _rnd.NextDouble(),
+                DataString = _rnd.NextDouble().ToString()
             };
             return data;
         }

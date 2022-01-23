@@ -10,8 +10,8 @@ namespace Morix.Json
 {
     internal class JsonConverter
     {
-        static readonly Dictionary<Type, Dictionary<string, FieldInfo>> _fieldInfoCached = new Dictionary<Type, Dictionary<string, FieldInfo>>();
-        static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _propertyInfoCached = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+        private static readonly Dictionary<Type, Dictionary<string, FieldInfo>> _fieldInfoCached = new Dictionary<Type, Dictionary<string, FieldInfo>>();
+        private static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _propertyInfoCached = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 
         public JsonConverter()
         {
@@ -48,7 +48,7 @@ namespace Morix.Json
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        JsonValue ParseObject(object obj)
+        private JsonValue ParseObject(object obj)
         {
             if (obj == null)
                 return JsonValue.Null;
@@ -141,36 +141,27 @@ namespace Morix.Json
                 {
                     var nameToFields = GetFields(type);
 
-                    FieldInfo[] fieldInfos = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy);
-                    foreach (var field in nameToFields.Values)
+                    foreach (var member in nameToFields)
                     {
-                        if (field.IsDefined(typeof(JsonIgnore), true))
-                            continue;
-
-                        object value = field.GetValue(obj);
+                        object value = member.Value.GetValue(obj);
 
                         if (value != null)
                         {
-                            var name = GetCustomPropertyName(field);
                             var jvalue = ParseObject(value);
-                            jobject.Add(name, jvalue);
+                            jobject.Add(member.Key, jvalue);
                         }
                     }
                 }
                 if (JsonConvert.IncludeProperties)
                 {
                     var nameToProperties = GetProperties(type);
-                    foreach (var property in nameToProperties.Values)
+                    foreach (var member in nameToProperties)
                     {
-                        if (!property.CanRead || property.IsDefined(typeof(JsonIgnore), true))
-                            continue;
-
-                        object value = property.GetValue(obj, null);
+                        object value = member.Value.GetValue(obj, null);
                         if (value != null)
                         {
-                            var name = GetCustomPropertyName(property);
                             var jvalue = ParseObject(value);
-                            jobject.Add(name, jvalue);
+                            jobject.Add(member.Key, jvalue);
                         }
                     }
                 }
@@ -183,7 +174,7 @@ namespace Morix.Json
         /// </summary>
         /// <param name="json"></param>
         /// <returns></returns>
-        object ParseValue(JsonValue json)
+        private object ParseValue(JsonValue json)
         {
             if (json.IsNull)
                 return null;
@@ -236,7 +227,7 @@ namespace Morix.Json
         /// <param name="type"></param>
         /// <param name="json"></param>
         /// <returns></returns>
-        object ParseValue(Type type, JsonValue json)
+        private object ParseValue(Type type, JsonValue json)
         {
             if (json.IsNull)
                 return null;
@@ -372,7 +363,7 @@ namespace Morix.Json
         /// <param name="type"></param>
         /// <param name="json"></param>
         /// <returns></returns>
-        object ParseObject(Type type, JsonValue json)
+        private object ParseObject(Type type, JsonValue json)
         {
             object instance = FormatterServices.GetUninitializedObject(type);
 
@@ -397,7 +388,7 @@ namespace Morix.Json
         /// </summary>
         /// <param name="member"></param>
         /// <returns></returns>
-        string GetCustomPropertyName(MemberInfo member)
+        private string GetCustomPropertyName(MemberInfo member)
         {
             if (member.IsDefined(typeof(JsonProperty), true))
             {
@@ -415,7 +406,7 @@ namespace Morix.Json
         /// <typeparam name="T">Type to get fiels/properties</typeparam>
         /// <param name="members">Members in array</param>
         /// <returns></returns>
-        Dictionary<string, T> CreateMemberNameDictionary<T>(T[] members) where T : MemberInfo
+        private Dictionary<string, T> CreateMemberNameDictionary<T>(T[] members) where T : MemberInfo
         {
             Dictionary<string, T> nameToMember = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < members.Length; i++)
