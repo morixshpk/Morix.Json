@@ -10,11 +10,11 @@ namespace Morix.Json
 		/// <summary>
 		/// The column position, 0-based.
 		/// </summary>
-		public long position;
+		public long Position;
 
 		/// <summary>
 		/// The line position, 0-based.
 		/// </summary>
-		public long line;
+		public long Line;
 	}
 }

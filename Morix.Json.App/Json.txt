@@ -1,1 +1,1 @@
-﻿{"Bool":true,"Byte":179,"SByte":-17,"Short":-123,"UShort":123,"Int":161,"UInt":56,"Long":34,"ULong":34,"Single":4.3,"Double":5.6,"Decimal":10.1,"Time":"2021-08-16T00:00:00.0000000","Char":"C","String":"String","ListOfInt":[1,2,3,4,5],"DictOfStrings":{"1":"2","3":"4"}}
+﻿

@@ -8,13 +8,13 @@ namespace Morix.Json
 {
     public class JsonObject : JsonValue, IEnumerable<KeyValuePair<string, JsonValue>>, IEnumerable<JsonValue>
     {
-        private readonly IDictionary<string, JsonValue> properties;
+        private readonly IDictionary<string, JsonValue> _properties;
 
         public override int Count
         {
             get
             {
-                return properties.Count;
+                return _properties.Count;
             }
         }
 
@@ -34,7 +34,7 @@ namespace Morix.Json
         {
             get
             {
-                if (this.properties.TryGetValue(key, out var value))
+                if (this._properties.TryGetValue(key, out var value))
                 {
                     return value;
                 }
@@ -45,13 +45,13 @@ namespace Morix.Json
             }
             set
             {
-                this.properties[key] = value;
+                this._properties[key] = value;
             }
         }
 
         public JsonObject() :base(JsonType.Object)
         {
-            properties = new Dictionary<string, JsonValue>();
+            _properties = new Dictionary<string, JsonValue>();
         }
 
         public JsonObject Add(string key)
@@ -61,13 +61,13 @@ namespace Morix.Json
 
         public JsonObject Add(string key, JsonValue value)
         {
-            this.properties.Add(key, value);
+            this._properties.Add(key, value);
             return this;
         }
 
         public IEnumerator<KeyValuePair<string, JsonValue>> GetEnumerator()
         {
-            return properties.GetEnumerator();
+            return _properties.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -77,35 +77,35 @@ namespace Morix.Json
 
         IEnumerator<JsonValue> IEnumerable<JsonValue>.GetEnumerator()
         {
-            return properties.Values.GetEnumerator();
+            return _properties.Values.GetEnumerator();
         }
 
         public override bool ContainsKey(string key)
         {
-            return this.properties.ContainsKey(key);
+            return this._properties.ContainsKey(key);
         }
 
         public override bool Contains(JsonValue value)
         {
-            return this.properties.Values.Contains(value);
+            return this._properties.Values.Contains(value);
         }
 
         public override void Clear()
         {
-            properties.Clear();
+            _properties.Clear();
         }
 
         public override JsonValue Clone()
         {
             var clone = new JsonObject();
-            foreach (var item in this.properties)
+            foreach (var item in this._properties)
                 clone.Add(item.Key, item.Value.Clone());
             return clone;
         } 
         
         public override int GetHashCode()
         {
-            return this.properties.GetHashCode();
+            return this._properties.GetHashCode();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Morix.Json
 {
     public class JsonValue
     {
-        private readonly string InnerValue;
+        private readonly string _value;
 
         public bool IsNull { get { return Type == JsonType.Null; } }
 
@@ -34,13 +34,13 @@ namespace Morix.Json
         public JsonValue(JsonType type, string value)
         {
             Type = type;
-            InnerValue = value;
+            _value = value;
         }
 
         public JsonValue(bool value)
         {
             Type = JsonType.Boolean;
-            InnerValue = (value) ? "1" : "0";
+            _value = (value) ? "1" : "0";
         }
 
         public JsonValue(short? value)
@@ -48,7 +48,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString();
+                _value = value.Value.ToString();
             }
         }
 
@@ -57,7 +57,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString();
+                _value = value.Value.ToString();
             }
         }
 
@@ -66,7 +66,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString();
+                _value = value.Value.ToString();
             }
         }
 
@@ -75,7 +75,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString();
+                _value = value.Value.ToString();
             }
         }
 
@@ -84,7 +84,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString();
+                _value = value.Value.ToString();
             }
         }
 
@@ -93,7 +93,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString();
+                _value = value.Value.ToString();
             }
         }
 
@@ -102,7 +102,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString(CultureInfo.InvariantCulture);
+                _value = value.Value.ToString(CultureInfo.InvariantCulture);
             }
         }
 
@@ -111,7 +111,7 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString(CultureInfo.InvariantCulture);
+                _value = value.Value.ToString(CultureInfo.InvariantCulture);
             }
         }
 
@@ -120,14 +120,14 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString(CultureInfo.InvariantCulture);
+                _value = value.Value.ToString(CultureInfo.InvariantCulture);
             }
         }
 
         public JsonValue(string value)
         {
             Type = JsonType.String;
-            InnerValue = value;
+            _value = value;
         }
 
         public JsonValue(sbyte? value)
@@ -135,20 +135,20 @@ namespace Morix.Json
             if (value.HasValue)
             {
                 Type = JsonType.Number;
-                InnerValue = value.Value.ToString();
+                _value = value.Value.ToString();
             }
         }
 
         public JsonValue(DateTime value)
         {
             Type = JsonType.String;
-            InnerValue = value.ToString("o");
+            _value = value.ToString("o");
         }
 
         public JsonValue(Guid value)
         {
             Type = JsonType.String;
-            InnerValue=value.ToString();
+            _value=value.ToString();
         }
 
         public JsonType Type { get; private set; }
@@ -162,13 +162,13 @@ namespace Morix.Json
                     case JsonType.Null:
                         return "null";
                     case JsonType.Boolean:
-                        if (this.InnerValue == "1")
+                        if (this._value == "1")
                             return "true";
                         else
                             return "false";
                     case JsonType.Number:
                     case JsonType.String:
-                        return InnerValue;
+                        return _value;
                     default:
                         throw new InvalidOperationException("No value found for this type");
                 }
@@ -223,11 +223,11 @@ namespace Morix.Json
         public override int GetHashCode()
         {
             if (Type == JsonType.Boolean)
-                return InnerValue.GetHashCode();
+                return _value.GetHashCode();
             else if (Type == JsonType.Number)
-                return InnerValue.GetHashCode();
+                return _value.GetHashCode();
             else if (Type == JsonType.String)
-                return InnerValue.GetHashCode();
+                return _value.GetHashCode();
 
             return 0;
         }
@@ -235,98 +235,98 @@ namespace Morix.Json
         public virtual bool ToBolean()
         {
             if (this.IsBoolean)
-                return InnerValue.Equals("1");
+                return _value.Equals("1");
             throw new InvalidCastException();
         }
 
         public byte ToByte()
         {
             if (IsNumber)
-                return byte.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return byte.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public sbyte ToSByte()
         {
             if (IsNumber)
-                return sbyte.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return sbyte.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public short ToShort()
         {
             if (IsNumber)
-                return short.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return short.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public ushort ToUShort()
         {
             if (IsNumber)
-                return ushort.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return ushort.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public int ToInt()
         {
             if (IsNumber)
-                return int.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return int.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public uint ToUInt()
         {
             if (IsNumber)
-                return uint.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return uint.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public long ToLong()
         {
             if (IsNumber)
-                return long.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return long.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public ulong ToULong()
         {
             if (IsNumber)
-                return ulong.Parse(this.InnerValue, NumberStyles.Integer, CultureInfo.InvariantCulture);
+                return ulong.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public float ToFloat()
         {
             if (IsNumber)
-                return float.Parse(this.InnerValue, NumberStyles.Float, CultureInfo.InvariantCulture);
+                return float.Parse(this._value, NumberStyles.Float, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public double ToDouble()
         {
             if (IsNumber)
-                return double.Parse(this.InnerValue, NumberStyles.Float, CultureInfo.InvariantCulture);
+                return double.Parse(this._value, NumberStyles.Float, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public decimal ToDecimal()
         {
             if (this.IsNumber)
-                return decimal.Parse(this.InnerValue, NumberStyles.Float, CultureInfo.InvariantCulture);
+                return decimal.Parse(this._value, NumberStyles.Float, CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public DateTime ToDateTime()
         {
             if (Type == JsonType.String)
-                return DateTime.ParseExact(this.InnerValue, "o", CultureInfo.InvariantCulture);
+                return DateTime.ParseExact(this._value, "o", CultureInfo.InvariantCulture);
             throw new InvalidCastException();
         }
 
         public Guid ToGuid()
         {
             if (Type == JsonType.String)
-                return Guid.Parse(this.InnerValue);
+                return Guid.Parse(this._value);
             throw new InvalidCastException();
         }
 

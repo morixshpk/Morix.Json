@@ -11,8 +11,8 @@ namespace Morix.Json
 	/// </summary>
 	internal sealed class TextScanner
 	{
-		private readonly TextReader reader;
-		private TextPosition position;
+		private readonly TextReader _reader;
+		private TextPosition _position;
 
 		/// <summary>
 		/// Gets the position of the scanner within the text.
@@ -21,7 +21,7 @@ namespace Morix.Json
 		{
 			get
 			{
-				return this.position;
+				return this._position;
 			}
 		}
 
@@ -32,7 +32,7 @@ namespace Morix.Json
 		{
 			get
 			{
-				return (this.reader.Peek() != -1);
+				return (this._reader.Peek() != -1);
 			}
 		}
 
@@ -42,7 +42,7 @@ namespace Morix.Json
 		/// <param name="reader">The TextReader to read the text.</param>
 		public TextScanner(TextReader reader)
 		{
-			this.reader = reader ?? throw new ArgumentNullException(nameof(reader));
+			this._reader = reader ?? throw new ArgumentNullException(nameof(reader));
 		}
 
 		/// <summary>
@@ -50,13 +50,13 @@ namespace Morix.Json
 		/// </summary>
 		public char Peek()
 		{
-			var next = reader.Peek();
+			var next = _reader.Peek();
 
 			if (next == -1)
 			{
 				throw new JsonParseException(
 					ErrorType.IncompleteMessage,
-					this.position
+					this._position
 				);
 			}
 
@@ -68,13 +68,13 @@ namespace Morix.Json
 		/// </summary>
 		public char Read()
 		{
-			var next = reader.Read();
+			var next = _reader.Read();
 
 			if (next == -1)
 			{
 				throw new JsonParseException(
 					ErrorType.IncompleteMessage,
-					this.position
+					this._position
 				);
 			}
 
@@ -82,19 +82,19 @@ namespace Morix.Json
 			{
 				case '\r':
 					// Normalize '\r\n' line encoding to '\n'.
-					if (reader.Peek() == '\n')
+					if (_reader.Peek() == '\n')
 					{
-						reader.Read();
+						_reader.Read();
 					}
 					goto case '\n';
 
 				case '\n':
-					this.position.line += 1;
-					this.position.position = 0;
+					this._position.Line += 1;
+					this._position.Position = 0;
 					return '\n';
 
 				default:
-					this.position.position += 1;
+					this._position.Position += 1;
 					return (char)next;
 			}
 		}
@@ -126,7 +126,7 @@ namespace Morix.Json
 				throw new JsonParseException(
 					string.Format("Parser expected '{0}'", next),
 					ErrorType.InvalidOrUnexpectedCharacter,
-					this.position
+					this._position
 				);
 			}
 		}
@@ -150,7 +150,7 @@ namespace Morix.Json
 				throw new JsonParseException(
 					string.Format("Parser expected '{0}'", next),
 					ErrorType.InvalidOrUnexpectedCharacter,
-					this.position
+					this._position
 				);
 			}
 		}

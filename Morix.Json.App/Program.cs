@@ -43,40 +43,78 @@ namespace Morix.Json.App
 
             //}
 
-            BenchmarkRunner.Run<Competitors>();
+            //BenchmarkRunner.Run<Competitors>();
 
-            MyTests();
+            MyTests(100);
+            MyTests(1000);
+            MyTests(100000);
+            MyTests(1000);
+            MyTests(100);
+            Console.ReadKey();
+            Console.ReadKey();
         }
 
-        private static void MyTests()
+        private static void MyTests(int max)
         {
+            Console.WriteLine("----------------------------------");
+            Console.WriteLine("Runnig iterations = " + max.ToString("#,##0"));
             var s = new Competitors();
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            s.Morix_Serialize();
+            int i = max;
+            while (i > 0)
+            {
+                s.Morix_Serialize();
+                i--;
+            }
             sw.Stop();
             Console.WriteLine("Morix_Serialize ".PadRight(30) + sw.ElapsedMilliseconds.ToString().PadLeft(5) + " ms");
+
             sw.Restart();
-            s.Newton_Serialize();
+            i = max;
+            while (i > 0)
+            {
+                s.Newton_Serialize();
+                i--;
+            }
             sw.Stop();
             Console.WriteLine("Newton_Serialize ".PadRight(30) + sw.ElapsedMilliseconds.ToString().PadLeft(5) + " ms");
+
             sw.Restart();
-            s.Microsoft_Serialize();
+            i = max;
+            while (i > 0)
+            {
+                s.Microsoft_Serialize();
+                i--;
+            }
             sw.Stop();
             Console.WriteLine("Microsoft_Serialize ".PadRight(30) + sw.ElapsedMilliseconds.ToString().PadLeft(5) + " ms");
             sw.Restart();
-            s.Morix_Deserialize();
+            i = max;
+            while (i > 0)
+            {
+                s.Morix_Deserialize();
+                i--;
+            }
             sw.Stop();
             Console.WriteLine("Morix_Deserialize ".PadRight(30) + sw.ElapsedMilliseconds.ToString().PadLeft(5) + " ms");
             sw.Restart();
-            s.Newton_Deserialize();
+            i = max;
+            while (i > 0)
+            {
+                s.Newton_Deserialize();
+                i--;
+            }
             sw.Stop();
             Console.WriteLine("Newton_Deserialize ".PadRight(30) + sw.ElapsedMilliseconds.ToString().PadLeft(5) + " ms");
             sw.Restart();
-            s.Microsoft_Deserialize();
+            i = max;
+            while (i > 0)
+            {
+                s.Microsoft_Deserialize();
+                i--;
+            }
             sw.Stop();
             Console.WriteLine("Microsoft_Deserialize ".PadRight(30) + sw.ElapsedMilliseconds.ToString().PadLeft(5) + " ms");
-
-            Console.ReadKey();
         }
     }
 }

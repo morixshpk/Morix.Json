@@ -10,8 +10,8 @@ namespace Morix.Json
 {
     internal class JsonConverter
     {
-        static readonly Dictionary<Type, Dictionary<string, FieldInfo>> fieldInfoCached = new Dictionary<Type, Dictionary<string, FieldInfo>>();
-        static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> propertyInfoCached = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
+        static readonly Dictionary<Type, Dictionary<string, FieldInfo>> _fieldInfoCached = new Dictionary<Type, Dictionary<string, FieldInfo>>();
+        static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _propertyInfoCached = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 
         public JsonConverter()
         {
@@ -443,10 +443,10 @@ namespace Morix.Json
         /// <returns></returns>
         private Dictionary<string, FieldInfo> GetFields(Type type)
         {
-            if (!fieldInfoCached.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
+            if (!_fieldInfoCached.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
             {
                 nameToField = CreateMemberNameDictionary(type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                fieldInfoCached.Add(type, nameToField);
+                _fieldInfoCached.Add(type, nameToField);
             }
 
             return nameToField;
@@ -459,10 +459,10 @@ namespace Morix.Json
         /// <returns></returns>
         private Dictionary<string, PropertyInfo> GetProperties(Type type)
         {
-            if (!propertyInfoCached.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))
+            if (!_propertyInfoCached.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))
             {
                 nameToProperty = CreateMemberNameDictionary(type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                propertyInfoCached.Add(type, nameToProperty);
+                _propertyInfoCached.Add(type, nameToProperty);
             }
             return nameToProperty;
         }

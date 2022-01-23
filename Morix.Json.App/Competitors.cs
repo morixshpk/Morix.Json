@@ -10,17 +10,11 @@ namespace Morix.Json.App
 {
     public class Competitors
     {
-        private static string jsonText = "";
-
-        public Competitors()
-        {
-            jsonText = System.IO.File.ReadAllText("Json.txt");
-        }
-
         [Benchmark]
         public void Morix_Serialize()
         {
-            var obj = Morix.Json.JsonConvert.Serialize(PrimitiveObject.Create());
+            var data = DataObject.Create();
+            var obj = Morix.Json.JsonConvert.Serialize(DataObject.Create());
             if (obj == null)
             {
                 throw new NullReferenceException();
@@ -30,7 +24,7 @@ namespace Morix.Json.App
         [Benchmark]
         public void Newton_Serialize()
         {
-            var obj = Newtonsoft.Json.JsonConvert.SerializeObject(PrimitiveObject.Create());
+            var obj = Newtonsoft.Json.JsonConvert.SerializeObject(DataObject.Create());
             if (obj == null)
             {
                 throw new NullReferenceException();
@@ -40,7 +34,7 @@ namespace Morix.Json.App
         [Benchmark]
         public void Microsoft_Serialize()
         {
-            var obj = System.Text.Json.JsonSerializer.Serialize(PrimitiveObject.Create());
+            var obj = System.Text.Json.JsonSerializer.Serialize(DataObject.Create());
             if (obj == null)
             {
                 throw new NullReferenceException();
@@ -50,19 +44,28 @@ namespace Morix.Json.App
         [Benchmark]
         public void Morix_Deserialize()
         {
-            Morix.Json.JsonConvert.Deserialize<PrimitiveObject>(jsonText);
+            var jsonText = GetText();
+            Morix.Json.JsonConvert.Deserialize<DataObject>(jsonText);
         }
 
         [Benchmark]
         public void Newton_Deserialize()
         {
-            Newtonsoft.Json.JsonConvert.DeserializeObject<PrimitiveObject>(jsonText);
+            var jsonText = GetText();
+            Newtonsoft.Json.JsonConvert.DeserializeObject<DataObject>(jsonText);
         }
 
         [Benchmark]
         public void Microsoft_Deserialize()
         {
-            System.Text.Json.JsonSerializer.Deserialize<PrimitiveObject>(jsonText);
+            var jsonText = GetText();
+            System.Text.Json.JsonSerializer.Deserialize<DataObject>(jsonText);
+        }
+
+        private static string GetText()
+        {
+            var data = DataObject.Create();
+            return JsonConvert.Serialize(data);
         }
     }
 }

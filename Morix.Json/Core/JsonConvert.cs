@@ -45,8 +45,8 @@ namespace Morix.Json
         /// <returns></returns>
         public static string Serialize(object obj)
         {
-            var converter = new JsonConverter();
-            return converter.Serialize(obj);
+            var con = new JsonConverter();
+            return con.Serialize(obj);
         }
 
         /// <summary>
@@ -60,11 +60,11 @@ namespace Morix.Json
         {
             try
             {
-                var converter = new JsonConverter();
-                return converter.Deserialize<T>(json);
+                var con = new JsonConverter();
+                return con.Deserialize<T>(json);
             }
             catch(JsonParseException ex) {
-                throw new Exception(ex.Message + " line: " + ex.Position.line + ", position: " + ex.Position.position);
+                throw new Exception(ex.Message + " line: " + ex.Position.Line + ", position: " + ex.Position.Position);
             }
         }
 

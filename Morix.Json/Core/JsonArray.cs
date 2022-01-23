@@ -8,19 +8,19 @@ namespace Morix.Json
 {
 	public class JsonArray : JsonValue, IEnumerable<JsonValue>
 	{
-		private readonly IList<JsonValue> items;
+		private readonly IList<JsonValue> _items;
 		
 		public override int Count { 
-			get { return items.Count; }
+			get { return _items.Count; }
 		}
 
 		public override JsonValue this[int index]
 		{
 			get
 			{
-				if (index >= 0 && index < this.items.Count)
+				if (index >= 0 && index < this._items.Count)
 				{
-					return this.items[index];
+					return this._items[index];
 				}
 				else
 				{
@@ -29,7 +29,7 @@ namespace Morix.Json
 			}
 			set
 			{
-				this.items[index] = value;
+				this._items[index] = value;
 			}
 		}
 
@@ -47,7 +47,7 @@ namespace Morix.Json
 
 		public JsonArray() : base(JsonType.Array)
 		{
-			this.items = new List<JsonValue>();
+			this._items = new List<JsonValue>();
 		}
 
 		public JsonArray(params JsonValue[] values) : this()
@@ -59,13 +59,13 @@ namespace Morix.Json
 
 			foreach (var value in values)
 			{
-				this.items.Add(value);
+				this._items.Add(value);
 			}
 		}
 
 		public IEnumerator<JsonValue> GetEnumerator()
 		{
-			return this.items.GetEnumerator();
+			return this._items.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
@@ -75,31 +75,31 @@ namespace Morix.Json
 
 		public override JsonValue Add(JsonValue jsonValue)
 		{
-			this.items.Add(jsonValue);
+			this._items.Add(jsonValue);
 			return this;
 		}
 
 		public override bool Contains(JsonValue value)
 		{
-			return this.items.Contains(value);
+			return this._items.Contains(value);
 		}
 		
 		public override void Clear()
 		{
-			items.Clear();
+			_items.Clear();
 		}
 
 		public override JsonValue Clone()
         {
 			var clone = new JsonArray();
-			foreach (var item in this.items)
+			foreach (var item in this._items)
 				clone.Add(item.Clone());
 			return clone;
 		}
 
         public override int GetHashCode()
 		{
-			return this.items.GetHashCode();
+			return this._items.GetHashCode();
 		}
 	}
 }

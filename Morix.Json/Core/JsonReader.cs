@@ -12,11 +12,11 @@ namespace Morix.Json
 	/// </summary>
 	internal sealed class JsonReader
 	{
-		private readonly TextScanner scanner;
+		private readonly TextScanner _scanner;
 
 		private JsonReader(TextReader reader)
 		{
-			this.scanner = new TextScanner(reader);
+			this._scanner = new TextScanner(reader);
 		}
 
 		private string ReadJsonKey()
@@ -26,9 +26,9 @@ namespace Morix.Json
 
 		private JsonValue ReadJsonValue()
 		{
-			this.scanner.SkipWhitespace();
+			this._scanner.SkipWhitespace();
 
-			var next = this.scanner.Peek();
+			var next = this._scanner.Peek();
 
 			if (char.IsNumber(next))
 			{
@@ -59,42 +59,42 @@ namespace Morix.Json
 				default:
 					throw new JsonParseException(
 						ErrorType.InvalidOrUnexpectedCharacter,
-						this.scanner.Position
+						this._scanner.Position
 					);
 			}
 		}
 
 		private JsonValue ReadNull()
 		{
-			this.scanner.Assert("null");
+			this._scanner.Assert("null");
 			return JsonValue.Null;
 		}
 
 		private JsonValue ReadBoolean()
 		{
-			switch (this.scanner.Peek())
+			switch (this._scanner.Peek())
 			{
 				case 't':
-					this.scanner.Assert("true");
+					this._scanner.Assert("true");
 					return new JsonValue(true);
 
 				case 'f':
-					this.scanner.Assert("false");
+					this._scanner.Assert("false");
 					return new JsonValue(false);
 
 				default:
 					throw new JsonParseException(
 						ErrorType.InvalidOrUnexpectedCharacter,
-						this.scanner.Position
+						this._scanner.Position
 					);
 			}
 		}
 
 		private void ReadDigits(StringBuilder builder)
 		{
-			while (this.scanner.CanRead && char.IsDigit(this.scanner.Peek()))
+			while (this._scanner.CanRead && char.IsDigit(this._scanner.Peek()))
 			{
-				builder.Append(this.scanner.Read());
+				builder.Append(this._scanner.Read());
 			}
 		}
 
@@ -102,37 +102,37 @@ namespace Morix.Json
 		{
 			var builder = new StringBuilder();
 
-			if (this.scanner.Peek() == '-')
+			if (this._scanner.Peek() == '-')
 			{
-				builder.Append(this.scanner.Read());
+				builder.Append(this._scanner.Read());
 			}
 
-			if (this.scanner.Peek() == '0')
+			if (this._scanner.Peek() == '0')
 			{
-				builder.Append(this.scanner.Read());
+				builder.Append(this._scanner.Read());
 			}
 			else
 			{
 				ReadDigits(builder);
 			}
 
-			if (this.scanner.CanRead && this.scanner.Peek() == '.')
+			if (this._scanner.CanRead && this._scanner.Peek() == '.')
 			{
-				builder.Append(this.scanner.Read());
+				builder.Append(this._scanner.Read());
 				ReadDigits(builder);
 			}
 
-			if (this.scanner.CanRead && char.ToLowerInvariant(this.scanner.Peek()) == 'e')
+			if (this._scanner.CanRead && char.ToLowerInvariant(this._scanner.Peek()) == 'e')
 			{
-				builder.Append(this.scanner.Read());
+				builder.Append(this._scanner.Read());
 
-				var next = this.scanner.Peek();
+				var next = this._scanner.Peek();
 
 				switch (next)
 				{
 					case '+':
 					case '-':
-						builder.Append(this.scanner.Read());
+						builder.Append(this._scanner.Read());
 						break;
 				}
 
@@ -146,15 +146,15 @@ namespace Morix.Json
 		{
 			var builder = new StringBuilder();
 
-			this.scanner.Assert('"');
+			this._scanner.Assert('"');
 
 			while (true)
 			{
-				var c = this.scanner.Read();
+				var c = this._scanner.Read();
 
 				if (c == '\\')
 				{
-					c = this.scanner.Read();
+					c = this._scanner.Read();
 
 					switch (char.ToLower(c))
 					{
@@ -184,7 +184,7 @@ namespace Morix.Json
 						default:
 							throw new JsonParseException(
 								ErrorType.InvalidOrUnexpectedCharacter,
-								this.scanner.Position
+								this._scanner.Position
 							);
 					}
 				}
@@ -213,7 +213,7 @@ namespace Morix.Json
                     {
                         throw new JsonParseException(
                             ErrorType.InvalidOrUnexpectedCharacter,
-                            this.scanner.Position
+                            this._scanner.Position
                         );
                     }
                     else
@@ -228,7 +228,7 @@ namespace Morix.Json
 
 		private int ReadHexDigit()
 		{
-			switch (char.ToUpper(this.scanner.Read()))
+			switch (char.ToUpper(this._scanner.Read()))
 			{
 				case '0':
 					return 0;
@@ -281,7 +281,7 @@ namespace Morix.Json
 				default:
 					throw new JsonParseException(
 						ErrorType.InvalidOrUnexpectedCharacter,
-						this.scanner.Position
+						this._scanner.Position
 					);
 			}
 		}
@@ -305,19 +305,19 @@ namespace Morix.Json
 
 		private JsonObject ReadObject(JsonObject jsonObject)
 		{
-			this.scanner.Assert('{');
+			this._scanner.Assert('{');
 
-			this.scanner.SkipWhitespace();
+			this._scanner.SkipWhitespace();
 
-			if (this.scanner.Peek() == '}')
+			if (this._scanner.Peek() == '}')
 			{
-				this.scanner.Read();
+				this._scanner.Read();
 			}
 			else
 			{
 				while (true)
 				{
-					this.scanner.SkipWhitespace();
+					this._scanner.SkipWhitespace();
 
 					var key = ReadJsonKey();
 
@@ -325,23 +325,23 @@ namespace Morix.Json
 					{
 						throw new JsonParseException(
 							ErrorType.DuplicateObjectKeys,
-							this.scanner.Position
+							this._scanner.Position
 						);
 					}
 
-					this.scanner.SkipWhitespace();
+					this._scanner.SkipWhitespace();
 
-					this.scanner.Assert(':');
+					this._scanner.Assert(':');
 
-					this.scanner.SkipWhitespace();
+					this._scanner.SkipWhitespace();
 
 					var value = ReadJsonValue();
 
 					jsonObject.Add(key, value);
 
-					this.scanner.SkipWhitespace();
+					this._scanner.SkipWhitespace();
 
-					var next = this.scanner.Read();
+					var next = this._scanner.Read();
 
 					if (next == '}')
 					{
@@ -355,7 +355,7 @@ namespace Morix.Json
 					{
 						throw new JsonParseException(
 							ErrorType.InvalidOrUnexpectedCharacter,
-							this.scanner.Position
+							this._scanner.Position
 						);
 					}
 				}
@@ -371,27 +371,27 @@ namespace Morix.Json
 
 		private JsonArray ReadArray(JsonArray jsonArray)
 		{
-			this.scanner.Assert('[');
+			this._scanner.Assert('[');
 
-			this.scanner.SkipWhitespace();
+			this._scanner.SkipWhitespace();
 
-			if (this.scanner.Peek() == ']')
+			if (this._scanner.Peek() == ']')
 			{
-				this.scanner.Read();
+				this._scanner.Read();
 			}
 			else
 			{
 				while (true)
 				{
-					this.scanner.SkipWhitespace();
+					this._scanner.SkipWhitespace();
 
 					var value = ReadJsonValue();
 
 					jsonArray.Add(value);
 
-					this.scanner.SkipWhitespace();
+					this._scanner.SkipWhitespace();
 
-					var next = this.scanner.Read();
+					var next = this._scanner.Read();
 
 					if (next == ']')
 					{
@@ -405,7 +405,7 @@ namespace Morix.Json
 					{
 						throw new JsonParseException(
 							ErrorType.InvalidOrUnexpectedCharacter,
-							this.scanner.Position
+							this._scanner.Position
 						);
 					}
 				}
@@ -416,7 +416,7 @@ namespace Morix.Json
 
 		private JsonValue Parse()
 		{
-			this.scanner.SkipWhitespace();
+			this._scanner.SkipWhitespace();
 			return ReadJsonValue();
 		}
 

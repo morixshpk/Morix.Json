@@ -13,8 +13,8 @@ namespace Morix.Json
 	/// </summary>
 	internal sealed class JsonWriter
 	{
-		private int indent;
-		private bool isNewLine;
+		private int _indent;
+		private bool _isNewLine;
 
 		/// <summary>
 		/// Gets or sets the string representing a indent in the output.
@@ -59,9 +59,9 @@ namespace Morix.Json
 
 		private void Write(string text)
 		{
-			if (this.isNewLine)
+			if (this._isNewLine)
 			{
-				this.isNewLine = false;
+				this._isNewLine = false;
 				WriteIndentation();
 			}
 
@@ -156,7 +156,7 @@ namespace Morix.Json
 
 		private void WriteIndentation()
 		{
-			for (var i = 0; i < this.indent; i += 1)
+			for (var i = 0; i < this._indent; i += 1)
 			{
 				Write(this.IndentString);
 			}
@@ -170,7 +170,7 @@ namespace Morix.Json
 		private void WriteLine()
 		{
 			Write(this.NewLineString);
-			this.isNewLine = true;
+			this._isNewLine = true;
 		}
 
 		private void WriteLine(string line)
@@ -207,7 +207,7 @@ namespace Morix.Json
 		{
 			WriteLine("[");
 
-			indent += 1;
+			_indent += 1;
 
 			using (var enumerator = value.GetEnumerator())
 			{
@@ -230,7 +230,7 @@ namespace Morix.Json
 				}
 			}
 
-			indent -= 1;
+			_indent -= 1;
 
 			Write("]");
 		}
@@ -239,7 +239,7 @@ namespace Morix.Json
 		{
 			WriteLine("{");
 
-			indent += 1;
+			_indent += 1;
 
 			using(var enumerator = GetJsonObjectEnumerator(value))
 			{
@@ -265,7 +265,7 @@ namespace Morix.Json
 				}
 			}
 
-			indent -= 1;
+			_indent -= 1;
 
 			Write("}");
 		}
@@ -301,8 +301,8 @@ namespace Morix.Json
 		/// <param name="jsonValue">The JsonValue to write.</param>
 		public void Write(JsonValue jsonValue)
 		{
-			this.indent = 0;
-			this.isNewLine = true;
+			this._indent = 0;
+			this._isNewLine = true;
 
 			Render(jsonValue);
 		}
