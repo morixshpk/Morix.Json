@@ -9,43 +9,41 @@ namespace Morix.Json.App
     {
         static void Main()
         {
-            string data = "\"hello\nthere\"";
-            try
-            {
-                var morix = JsonConvert.Deserialize<string>(data);
-                if (morix != null)
-                {
+            //string data = "\"hello\nthere\"";
+            //try
+            //{
+            //    var morix = JsonConvert.Deserialize<string>(data);
+            //    if (morix != null)
+            //    {
 
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.ToString());
+            //}
 
+            //try
+            //{
+            //    var parsed = Newtonsoft.Json.JsonConvert.
+            //        DeserializeObject<string>(data);
+            //}
+            //catch (Exception ex)
+            //{
 
+            //}
 
-            try
-            {
-                var parsed = Newtonsoft.Json.JsonConvert.
-                    DeserializeObject<string>(data);
-            }
-            catch (Exception ex)
-            {
+            //try
+            //{
+            //    var parsed = System.Text.Json.JsonDocument.Parse(data);
 
-            }
+            //}
+            //catch (Exception ex)
+            //{
 
-            try
-            {
-                var parsed = System.Text.Json.JsonDocument.Parse(data);
+            //}
 
-            }
-            catch (Exception ex)
-            {
-
-            }
-
-            //BenchmarkRunner.Run<Competitors>();
+            BenchmarkRunner.Run<Competitors>();
 
             MyTests();
         }
