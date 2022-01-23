@@ -90,11 +90,11 @@ namespace Morix.Json
 
 				case '\n':
 					this.position.line += 1;
-					this.position.column = 0;
+					this.position.position = 0;
 					return '\n';
 
 				default:
-					this.position.column += 1;
+					this.position.position += 1;
 					return (char)next;
 			}
 		}

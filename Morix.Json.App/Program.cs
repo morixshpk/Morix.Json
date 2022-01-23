@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 
@@ -8,7 +9,43 @@ namespace Morix.Json.App
     {
         static void Main()
         {
-            BenchmarkRunner.Run<Competitors>();
+            string data = "\"hello\nthere\"";
+            try
+            {
+                var morix = JsonConvert.Deserialize<string>(data);
+                if (morix != null)
+                {
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+
+
+
+            try
+            {
+                var parsed = Newtonsoft.Json.JsonConvert.
+                    DeserializeObject<string>(data);
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            try
+            {
+                var parsed = System.Text.Json.JsonDocument.Parse(data);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            //BenchmarkRunner.Run<Competitors>();
 
             MyTests();
         }

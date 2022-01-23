@@ -55,6 +55,7 @@ namespace Morix.Json
         /// <typeparam name="T">Type to be convert to</typeparam>
         /// <param name="json">Json string value to be parsed</param>
         /// <returns></returns>
+        /// <exception cref="Exception">Check the message of exception for more details about the error.When things go wrong.</exception>
         public static T Deserialize<T>(this string json)
         {
             try
@@ -62,11 +63,9 @@ namespace Morix.Json
                 var converter = new JsonConverter();
                 return converter.Deserialize<T>(json);
             }
-            catch
-            {
-
+            catch(JsonParseException ex) {
+                throw new Exception(ex.Message + " line: " + ex.Position.line + ", position: " + ex.Position.position);
             }
-            return default;
         }
 
         /// <summary>

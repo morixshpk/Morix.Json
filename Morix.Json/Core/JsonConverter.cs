@@ -178,6 +178,11 @@ namespace Morix.Json
             }
         }
 
+        /// <summary>
+        /// Parse value from given type and JsonValue
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
         object ParseValue(JsonValue json)
         {
             if (json.IsNull)
@@ -225,6 +230,12 @@ namespace Morix.Json
             return null;
         }
 
+        /// <summary>
+        /// Parse value from given JsonValue. In most cases this primitive data bave to be convered from JsonValue.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="json"></param>
+        /// <returns></returns>
         object ParseValue(Type type, JsonValue json)
         {
             if (json.IsNull)
@@ -355,6 +366,12 @@ namespace Morix.Json
             return null;
         }
 
+        /// <summary>
+        /// Parse object of specific type from JsonValue;
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="json"></param>
+        /// <returns></returns>
         object ParseObject(Type type, JsonValue json)
         {
             object instance = FormatterServices.GetUninitializedObject(type);
@@ -419,6 +436,11 @@ namespace Morix.Json
             return nameToMember;
         }
 
+        /// <summary>
+        /// Internal method to get fields of the object stored in cache
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private Dictionary<string, FieldInfo> GetFields(Type type)
         {
             if (!fieldInfoCached.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
@@ -430,6 +452,11 @@ namespace Morix.Json
             return nameToField;
         }
 
+        /// <summary>
+        /// Internal method to get properties of the object stored in cache
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         private Dictionary<string, PropertyInfo> GetProperties(Type type)
         {
             if (!propertyInfoCached.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))

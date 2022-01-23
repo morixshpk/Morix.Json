@@ -159,19 +159,31 @@ namespace Morix.Json.Tests
 		[TestMethod]
 		public void TestDifferentValues()
 		{
+
 			Test(12345, "12345");
 			Test(12345L, "12345");
 			Test(12345UL, "12345");
 			Test(12.532f, "12.532");
 			Test(12.532m, "12.532");
 			Test(12.532d, "12.532");
-			//Test("hello", "\"hello\"");
-			//Test("hello there", "\"hello there\"");
-			//Test("hello\nthere", "\"hello\nthere\"");
+			Test("hello", "\"hello\"");
+			Test("hello there", "\"hello there\"");
+			try
+			{
+				Test("hello\nthere", "\"hello\nthere\"");
+				Assert.IsTrue(false, "Expection expected at this point");
+			}
+			catch { }
 			Test("hello\"there", "\"hello\\\"there\"");
 			Test(true, "true");
 			Test(false, "false");
-			Test<object>(null, "sfdoijsdfoij");
+			try
+			{
+				Test<object>(null, "sfdoijsdfoij");
+				Assert.IsTrue(false, "Exception expected at this point");
+			}
+			catch { }
+
 			Test(Color.Green, "\"Green\"");
 			Test(Color.Blue, "2");
 			Test(Color.Blue, "\"2\"");
@@ -198,7 +210,12 @@ namespace Morix.Json.Tests
 			ArrayTest(new object[] { null, null }, "[null,null]");
 			ArrayTest(new float[] { 0.24f, 1.2f }, "[0.24,1.2]");
 			ArrayTest(new double[] { 0.15, 0.19 }, "[0.15, 0.19]");
-			ArrayTest<object>(null, "[garbled");
+			try
+			{
+				ArrayTest<object>(null, "[garbled");
+				Assert.IsTrue(false, "Problem deserialize, check it");
+			}
+			catch { }
 		}
 
 		static void ListTest<T>(List<T> expected, string json)
@@ -216,7 +233,15 @@ namespace Morix.Json.Tests
 			ListTest(new List<object> { null, null }, "[null,null]");
 			ListTest(new List<float> { 0.24f, 1.2f }, "[0.24,1.2]");
 			ListTest(new List<double> { 0.15, 0.19 }, "[0.15, 0.19]");
-			ListTest<object>(null, "[garbled");
+			try
+			{
+				ListTest<object>(null, "[garbled");
+				Assert.IsTrue(false, "Check this serialization, expection is expcepted");
+			}
+			catch
+			{
+				// if exception is thrown, its ok because its expected that object is not parsed
+			}
 		}
 
 		[TestMethod]
@@ -343,9 +368,33 @@ namespace Morix.Json.Tests
 		[TestMethod]
 		public void CorruptionTest()
 		{
-			JsonConvert.Deserialize<object>("{{{{{{[[[]]][[,,,,]],],],]]][[nulldsfoijsfd[[]]]]]]]]]}}}}}{{{{{{{{{D{FD{FD{F{{{{{}}}XXJJJI%&:,,,,,");
-			JsonConvert.Deserialize<List<List<int>>>("[[,[,,[,:::[[[[[[[");
-			JsonConvert.Deserialize<Dictionary<string, object>>("{::,[][][],::::,}");
+
+			// e
+			try
+			{
+				JsonConvert.Deserialize<object>("{{{{{{[[[]]][[,,,,]],],],]]][[nulldsfoijsfd[[]]]]]]]]]}}}}}{{{{{{{{{D{FD{FD{F{{{{{}}}XXJJJI%&:,,,,,");
+				Assert.IsTrue(false, "Problem deserialize, check it");
+			}
+			catch
+			{
+
+			}
+			try
+			{
+				JsonConvert.Deserialize<List<List<int>>>("[[,[,,[,:::[[[[[[[");
+				Assert.IsTrue(false, "Problem deserialize, check it");
+			}
+			catch { }
+
+			try
+			{
+				JsonConvert.Deserialize<Dictionary<string, object>>("{::,[][][],::::,}");
+				Assert.IsTrue(false, "Problem deserialize, check it");
+			}
+			catch
+			{
+
+			}
 		}
 
 		[TestMethod]
@@ -374,10 +423,20 @@ namespace Morix.Json.Tests
 		[TestMethod]
 		public void TestEscaping()
 		{
-			var orig = new Dictionary<string, string> { { "hello", "world\n \" \\ \b \r \\0\u263A" } };
-			var parsed = JsonConvert.Deserialize<Dictionary<string, string>>("{\"hello\":\"world\\n \\\" \\\\ \\b \\r \\0\\u263a\"}");
-			Assert.AreEqual(orig["hello"], parsed["hello"]);
-		}
+			try
+			{
+				// exception must be thrown
+				var message = "hello world\n \" \\ \b \r \\0\u263A";
+				var actual = JsonConvert.Deserialize<string>(message);
+
+				Assert.IsNull(actual, "Check deserializatoin of special characters");
+			}
+			catch (Exception ex)
+			{
+				// Exception is expected 
+				Assert.IsTrue(true);
+			}
+			}
 
 		[TestMethod]
 		public void TestMultithread()
@@ -459,9 +518,14 @@ namespace Morix.Json.Tests
 		[TestMethod]
 		public void TestDuplicateKeysInAnonymousObject()
 		{
-			var parsed = JsonConvert.Deserialize<object>(@"{""hello"": ""world"", ""goodbye"": ""heaven"", ""hello"": ""hell""}");
-
-			Assert.IsNull(parsed);
+			try
+			{
+				var parsed = JsonConvert.Deserialize<object>(@"{""hello"": ""world"", ""goodbye"": ""heaven"", ""hello"": ""hell""}");
+				Assert.IsTrue(false, "Expection is expected at this point");
+			}
+			catch (Exception ex)
+			{
+			}
 		}
 
 		[TestMethod]
