@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace Morix.Json.Tests
+﻿namespace Morix.Json.Tests
 {
     public class JsonIgnoreObject
     {

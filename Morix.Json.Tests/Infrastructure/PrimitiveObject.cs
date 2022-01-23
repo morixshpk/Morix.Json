@@ -43,7 +43,7 @@ namespace Morix.Json.Tests
                 Time = new DateTime(2021, 8, 16),
                 Char = 'C',
                 String = "String",
-                ListOfInt = new List<int>{ 1, 2, 3, 4, 5 },
+                ListOfInt = new List<int> { 1, 2, 3, 4, 5 },
                 DictOfStrings = new Dictionary<string, string> { { "1", "2" }, { "3", "4" } }
             };
         }

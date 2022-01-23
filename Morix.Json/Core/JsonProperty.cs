@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Morix.Json
 {
@@ -13,7 +11,7 @@ namespace Morix.Json
         }
 
         public JsonProperty(string name)
-        { 
+        {
             this.Name = name;
         }
 

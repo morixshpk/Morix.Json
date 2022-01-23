@@ -7,7 +7,7 @@
         {
             R = r; G = g; B = b;
         }
-       
+
         public static NastyStruct Nasty = new NastyStruct(0, 0, 0);
     }
 }

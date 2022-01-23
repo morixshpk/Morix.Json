@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
 
 namespace Morix.Json.App
 {
@@ -46,10 +43,9 @@ namespace Morix.Json.App
             //BenchmarkRunner.Run<Competitors>();
 
             MyTests(1);
-            MyTests(1);
             MyTests(100);
             MyTests(1000);
-            MyTests(100000);
+            MyTests(10000);
             MyTests(1000);
             MyTests(100);
             Console.ReadKey();

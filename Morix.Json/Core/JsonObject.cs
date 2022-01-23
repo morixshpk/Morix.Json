@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Morix.Json
 {
@@ -49,7 +47,7 @@ namespace Morix.Json
             }
         }
 
-        public JsonObject() :base(JsonType.Object)
+        public JsonObject() : base(JsonType.Object)
         {
             _properties = new Dictionary<string, JsonValue>();
         }
@@ -101,8 +99,8 @@ namespace Morix.Json
             foreach (var item in this._properties)
                 clone.Add(item.Key, item.Value.Clone());
             return clone;
-        } 
-        
+        }
+
         public override int GetHashCode()
         {
             return this._properties.GetHashCode();

@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 
 namespace Morix.Json
 {
@@ -148,7 +145,7 @@ namespace Morix.Json
         public JsonValue(Guid value)
         {
             Type = JsonType.String;
-            _value=value.ToString();
+            _value = value.ToString();
         }
 
         public JsonType Type { get; private set; }
@@ -236,97 +233,119 @@ namespace Morix.Json
         {
             if (this.IsBoolean)
                 return _value.Equals("1");
+
             throw new InvalidCastException();
         }
 
-        public byte ToByte()
+        public byte ParseAsByte()
         {
             if (IsNumber)
                 return byte.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public sbyte ToSByte()
+        public sbyte ParseAsSByte()
         {
             if (IsNumber)
                 return sbyte.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public short ToShort()
+        public short ParseAsShort()
         {
             if (IsNumber)
                 return short.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public ushort ToUShort()
+        public ushort ParseAsUShort()
         {
             if (IsNumber)
                 return ushort.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public int ToInt()
+        public int ParseAsInt()
         {
             if (IsNumber)
                 return int.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public uint ToUInt()
+        public uint ParseAsUInt()
         {
             if (IsNumber)
                 return uint.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public long ToLong()
+        public long ParseAsLong()
         {
             if (IsNumber)
                 return long.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public ulong ToULong()
+        public ulong ParseAsULong()
         {
             if (IsNumber)
                 return ulong.Parse(this._value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public float ToFloat()
+        public float ParseAsFloat()
         {
             if (IsNumber)
                 return float.Parse(this._value, NumberStyles.Float, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public double ToDouble()
+        public double ParseAsDouble()
         {
             if (IsNumber)
                 return double.Parse(this._value, NumberStyles.Float, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public decimal ToDecimal()
+        public decimal ParseAsDecimal()
         {
             if (this.IsNumber)
                 return decimal.Parse(this._value, NumberStyles.Float, CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public DateTime ToDateTime()
+        public DateTime ParseAsDateTime()
         {
             if (Type == JsonType.String)
                 return DateTime.ParseExact(this._value, "o", CultureInfo.InvariantCulture);
+
             throw new InvalidCastException();
         }
 
-        public Guid ToGuid()
+        public string ParseAsString()
+        {
+            if (Type == JsonType.String)
+                return this._value;
+
+            throw new InvalidCastException();
+        }
+
+        public Guid ParseAsGuid()
         {
             if (Type == JsonType.String)
                 return Guid.Parse(this._value);
+
             throw new InvalidCastException();
         }
 
@@ -365,7 +384,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToByte();
+                        return prop.ParseAsByte();
                     }
                 }
                 catch
@@ -386,7 +405,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToSByte();
+                        return prop.ParseAsSByte();
                     }
                 }
                 catch
@@ -407,7 +426,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToShort();
+                        return prop.ParseAsShort();
                     }
                 }
                 catch
@@ -428,7 +447,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToUShort();
+                        return prop.ParseAsUShort();
                     }
                 }
                 catch
@@ -449,7 +468,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToInt();
+                        return prop.ParseAsInt();
                     }
                 }
                 catch
@@ -459,7 +478,7 @@ namespace Morix.Json
             }
             throw new InvalidCastException();
         }
-        
+
         public uint GetUInt(string name, uint value = default)
         {
             if (this.IsObject)
@@ -470,7 +489,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToUInt();
+                        return prop.ParseAsUInt();
                     }
                 }
                 catch
@@ -491,7 +510,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToLong();
+                        return prop.ParseAsLong();
                     }
                 }
                 catch
@@ -512,7 +531,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToULong();
+                        return prop.ParseAsULong();
                     }
                 }
                 catch
@@ -533,7 +552,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToFloat();
+                        return prop.ParseAsFloat();
                     }
                 }
                 catch
@@ -554,7 +573,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToDouble();
+                        return prop.ParseAsDouble();
                     }
                 }
                 catch
@@ -575,7 +594,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsNumber)
                     {
-                        return prop.ToDecimal();
+                        return prop.ParseAsDecimal();
                     }
                 }
                 catch
@@ -618,7 +637,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsString)
                     {
-                        return prop.ToDateTime();
+                        return prop.ParseAsDateTime();
                     }
                 }
                 catch
@@ -639,7 +658,7 @@ namespace Morix.Json
 
                     if (prop != null && prop.IsString)
                     {
-                        return prop.ToGuid();
+                        return prop.ParseAsGuid();
                     }
                 }
                 catch
@@ -652,20 +671,14 @@ namespace Morix.Json
 
         public override string ToString()
         {
-            return this.ToJson();
-        }
-
-        public string ToJson()
-        {
             return JsonWriter.Serialize(this);
         }
-
 
         //Static members
         public static JsonValue Null = new JsonValue();
 
         public static implicit operator JsonValue(bool value)
-        { 
+        {
             return new JsonValue(value);
         }
         public static implicit operator JsonValue(byte value)

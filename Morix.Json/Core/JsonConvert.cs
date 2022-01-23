@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.Serialization;
-using System.Text;
 
 namespace Morix.Json
 {
@@ -55,7 +49,7 @@ namespace Morix.Json
         /// <typeparam name="T">Type to be convert to</typeparam>
         /// <param name="json">Json string value to be parsed</param>
         /// <returns></returns>
-        /// <exception cref="Exception">Check the message of exception for more details about the error.When things go wrong.</exception>
+        /// <exception cref="JsonParseException">Check the message of exception for more details about the error.When things go wrong.</exception>
         public static T Deserialize<T>(this string json)
         {
             try
@@ -63,8 +57,9 @@ namespace Morix.Json
                 var con = new JsonConverter();
                 return con.Deserialize<T>(json);
             }
-            catch(JsonParseException ex) {
-                throw new Exception(ex.Message + " line: " + ex.Position.Line + ", position: " + ex.Position.Position);
+            catch (JsonParseException ex)
+            {
+                throw ex;
             }
         }
 

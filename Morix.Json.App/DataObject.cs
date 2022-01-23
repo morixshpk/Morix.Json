@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 
 namespace Morix.Json.App
@@ -13,7 +12,7 @@ namespace Morix.Json.App
 
         public double DataDouble { get; set; }
         public DateTime DataDateTime { get; set; }
- 
+
         public string DataString { get; set; }
 
         public static DataObject Create()

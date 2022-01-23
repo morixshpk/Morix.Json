@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace Morix.Json
 {
@@ -12,7 +10,7 @@ namespace Morix.Json
     {
         private static readonly Dictionary<Type, Dictionary<string, FieldInfo>> _fieldInfoCached = new Dictionary<Type, Dictionary<string, FieldInfo>>();
         private static readonly Dictionary<Type, Dictionary<string, PropertyInfo>> _propertyInfoCached = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
-
+        private static readonly object _sync = new object();
         public JsonConverter()
         {
 
@@ -26,7 +24,7 @@ namespace Morix.Json
         public string Serialize(object obj)
         {
             var json = ParseObject(obj);
-            return json.ToJson();
+            return json.ToString();
         }
 
         /// <summary>
@@ -384,23 +382,6 @@ namespace Morix.Json
         }
 
         /// <summary>
-        /// Get field or property name
-        /// </summary>
-        /// <param name="member"></param>
-        /// <returns></returns>
-        private string GetCustomPropertyName(MemberInfo member)
-        {
-            if (member.IsDefined(typeof(JsonProperty), true))
-            {
-                var customProperty = (JsonProperty)Attribute.GetCustomAttribute(member, typeof(JsonProperty), true);
-                if (!string.IsNullOrEmpty(customProperty.Name))
-                    return customProperty.Name;
-            }
-
-            return member.Name;
-        }
-
-        /// <summary>
         /// Get members in a dictionary for a specific type
         /// </summary>
         /// <typeparam name="T">Type to get fiels/properties</typeparam>
@@ -434,12 +415,16 @@ namespace Morix.Json
         /// <returns></returns>
         private Dictionary<string, FieldInfo> GetFields(Type type)
         {
-            if (!_fieldInfoCached.TryGetValue(type, out Dictionary<string, FieldInfo> nameToField))
-            {
-                nameToField = CreateMemberNameDictionary(type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                _fieldInfoCached.Add(type, nameToField);
-            }
+            Dictionary<string, FieldInfo> nameToField;
 
+            lock (_sync)
+            {
+                if (!_fieldInfoCached.TryGetValue(type, out nameToField))
+                {
+                    nameToField = CreateMemberNameDictionary(type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
+                    _fieldInfoCached[type] = nameToField;
+                }
+            }
             return nameToField;
         }
 
@@ -450,10 +435,14 @@ namespace Morix.Json
         /// <returns></returns>
         private Dictionary<string, PropertyInfo> GetProperties(Type type)
         {
-            if (!_propertyInfoCached.TryGetValue(type, out Dictionary<string, PropertyInfo> nameToProperty))
+            Dictionary<string, PropertyInfo> nameToProperty;
+            lock (_sync)
             {
-                nameToProperty = CreateMemberNameDictionary(type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
-                _propertyInfoCached.Add(type, nameToProperty);
+                if (!_propertyInfoCached.TryGetValue(type, out nameToProperty))
+                {
+                    nameToProperty = CreateMemberNameDictionary(type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy));
+                    _propertyInfoCached[type] = nameToProperty;
+                }
             }
             return nameToProperty;
         }
