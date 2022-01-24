@@ -49,7 +49,6 @@ namespace Morix.Json.App
             MyTests(1000);
             MyTests(100);
             Console.ReadKey();
-            Console.ReadKey();
         }
 
         private static void MyTests(int max)
