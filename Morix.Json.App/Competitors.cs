@@ -5,6 +5,12 @@ namespace Morix.Json.App
 {
     public class Competitors
     {
+        private static string json;
+        static Competitors()
+        {
+            json = System.IO.File.ReadAllText("Json.txt");
+        }
+
         [Benchmark]
         public void Morix_Serialize()
         {
@@ -38,28 +44,31 @@ namespace Morix.Json.App
         [Benchmark]
         public void Morix_Deserialize()
         {
-            var jsonText = GetText();
-            Morix.Json.JsonConvert.Deserialize<DataObject>(jsonText);
+            var obj = Morix.Json.JsonConvert.Parse(json);
+            if (obj == null)
+            {
+
+            }
         }
 
         [Benchmark]
         public void Newton_Deserialize()
         {
-            var jsonText = GetText();
-            Newtonsoft.Json.JsonConvert.DeserializeObject<DataObject>(jsonText);
+            var obj = Newtonsoft.Json.Linq.JObject.Parse(json);
+            if (obj == null)
+            {
+
+            }
         }
 
         [Benchmark]
         public void Microsoft_Deserialize()
         {
-            var jsonText = GetText();
-            System.Text.Json.JsonSerializer.Deserialize<DataObject>(jsonText);
-        }
+            var obj = System.Text.Json.JsonDocument.Parse(json);
+            if (obj == null)
+            {
 
-        private static string GetText()
-        {
-            var data = DataObject.Create();
-            return JsonConvert.Serialize(data);
+            }
         }
     }
 }
